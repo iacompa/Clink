@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Clink settings</title>
+  <link rel="stylesheet" href="../ui/base.css">
+  <link rel="stylesheet" href="options.css">
+</head>
+<body>
+  <main class="wrap">
+    <header class="head">
+      <img src="../icons/icon-128.png" alt="" width="44" height="44" class="logo">
+      <div>
+        <h1>Clink</h1>
+        <p class="muted">Removes tracking junk from the links you open — without breaking them.</p>
+      </div>
+      <label class="master">
+        <span id="masterLabel">On</span>
+        <input type="checkbox" class="switch" id="enabled" role="switch" aria-label="Clink on or off">
+      </label>
+    </header>
+
+    <section class="welcome card hidden" id="welcome">
+      <h2>You’re all set 🎉</h2>
+      <p>From now on, tracking parameters like <code>utm_source</code>, <code>fbclid</code> and <code>gclid</code> are stripped from every link you open — whether you click it on a page, open it in a new tab, or it comes from another app. Redirect hops like <code>google.com/url</code> are skipped too.</p>
+      <p class="muted">Pin Clink to your toolbar to see how many trackers it removes on each page.</p>
+      <div class="perm hidden" id="welcomePerm">
+        <p><strong>One more step:</strong> Clink needs permission to work on websites.</p>
+        <button class="btn primary" id="grantBtn">Allow Clink on all websites</button>
+      </div>
+    </section>
+
+    <section class="card section">
+      <h2>What to remove</h2>
+      <div id="categories"></div>
+    </section>
+
+    <section class="card section">
+      <h2>How Clink behaves</h2>
+      <div class="row">
+        <div class="row-text">
+          <div class="row-title">Skip redirect pages</div>
+          <div class="row-desc">Goes straight to the destination of links wrapped in <code>google.com/url</code>, <code>l.facebook.com</code>, YouTube, Reddit, LinkedIn, Steam and other click-tracking redirects. Corporate security scanners (Outlook Safe Links etc.) are never bypassed.</div>
+        </div>
+        <input type="checkbox" class="switch" data-setting="unwrapRedirects" role="switch">
+      </div>
+      <div class="row">
+        <div class="row-text">
+          <div class="row-title">Block link “ping” beacons</div>
+          <div class="row-desc">Removes the hidden <code>ping</code> attribute some sites (like Google Search) use to report every click.</div>
+        </div>
+        <input type="checkbox" class="switch" data-setting="removePing" role="switch">
+      </div>
+      <div class="row">
+        <div class="row-text">
+          <div class="row-title">Clean links I copy</div>
+          <div class="row-desc">When you copy a web address from a page, the clean version goes on your clipboard.</div>
+        </div>
+        <input type="checkbox" class="switch" data-setting="cleanOnCopy" role="switch">
+      </div>
+      <div class="row">
+        <div class="row-text">
+          <div class="row-title">Link Guard <span class="tag">recommended</span></div>
+          <div class="row-desc">If a cleaned link ever fails to load (an error page or a redirect loop), Clink instantly reopens the original link and stops cleaning that site, so you never get stuck on a broken page. <span class="warn hidden" id="guardUnavailable">Not available in this browser.</span></div>
+        </div>
+        <input type="checkbox" class="switch" data-setting="linkGuard" role="switch">
+      </div>
+      <div class="row">
+        <div class="row-text">
+          <div class="row-title">Show count on toolbar icon</div>
+          <div class="row-desc">How many links Clink cleaned on the current page.</div>
+        </div>
+        <input type="checkbox" class="switch" data-setting="showBadge" role="switch">
+      </div>
+    </section>
+
+    <section class="card section">
+      <h2>Sites where Clink is paused</h2>
+      <p class="muted small">Links to these sites keep their parameters, and Clink doesn’t touch links on their pages. Subdomains are included.</p>
+      <form class="add" id="addPaused">
+        <input type="text" id="pausedInput" placeholder="example.com" spellcheck="false" autocomplete="off">
+        <button class="btn" type="submit">Pause site</button>
+      </form>
+      <ul class="sites" id="pausedList"></ul>
+      <div class="empty faint" id="pausedEmpty">No paused sites.</div>
+
+      <h3>Paused automatically by Link Guard</h3>
+      <ul class="sites" id="guardedList"></ul>
+      <div class="empty faint" id="guardedEmpty">None — every cleaned link has worked so far.</div>
+    </section>
+
+    <section class="card section">
+      <h2>Always left alone</h2>
+      <ul class="bullets muted">
+        <li>Unsubscribe, email-preference and opt-in links (they need their IDs to know who you are).</li>
+        <li>Signed links (S3, Google Cloud, Azure, CloudFront…) — changing them would break them.</li>
+        <li>Sign-in and checkout pages (Google, Microsoft, Apple, PayPal, Stripe, Shopify…).</li>
+        <li>Marketing dashboards like Google Analytics and campaign URL builders.</li>
+        <li><code>localhost</code>, <code>.test</code>, <code>.local</code> and private IP addresses.</li>
+        <li>Parameters that change what you see: search terms, product variants, timestamps, gift-article codes, invite codes.</li>
+      </ul>
+    </section>
+
+    <section class="card section">
+      <h2>Your stats</h2>
+      <div class="stats">
+        <div><div class="num" id="sClicks">0</div><div class="muted small">links cleaned</div></div>
+        <div><div class="num" id="sParams">0</div><div class="muted small">trackers removed</div></div>
+        <div><div class="num" id="sUnwrapped">0</div><div class="muted small">redirects skipped</div></div>
+      </div>
+      <p class="muted small" id="sSince"></p>
+      <button class="btn small" id="resetStats">Reset stats</button>
+    </section>
+
+    <footer class="foot muted small">
+      <p><strong>Privacy:</strong> Clink works entirely inside your browser. It never sends your browsing data anywhere, has no analytics, and makes no network requests of its own. Stats are kept locally on this device.</p>
+      <p id="version"></p>
+    </footer>
+  </main>
+
+  <script src="../shared/rules.js"></script>
+  <script src="../shared/cleaner.js"></script>
+  <script src="../shared/settings.js"></script>
+  <script src="options.js"></script>
+</body>
+</html>

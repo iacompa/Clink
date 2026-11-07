@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Clink</title>
+  <link rel="stylesheet" href="../ui/base.css">
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <header class="top">
+    <img src="../icons/icon-48.png" alt="" class="logo" width="28" height="28">
+    <div class="brand">
+      <div class="name">Clink</div>
+      <div class="status" id="masterStatus">Cleaning links</div>
+    </div>
+    <input type="checkbox" class="switch" id="masterSwitch" role="switch" aria-label="Turn Clink on or off" checked>
+  </header>
+
+  <section class="banner hidden" id="permBanner">
+    <div>Clink needs access to websites to clean links.</div>
+    <button class="btn primary small" id="grantBtn">Allow access</button>
+  </section>
+
+  <section class="card site" id="siteCard">
+    <div class="site-row">
+      <div class="site-meta">
+        <div class="site-host" id="siteHost">—</div>
+        <div class="site-sub" id="siteSub"></div>
+      </div>
+      <label class="site-toggle" id="siteToggleWrap" title="Clean links on this site">
+        <input type="checkbox" class="switch" id="siteSwitch" role="switch" aria-label="Clean links on this site" checked>
+      </label>
+    </div>
+
+    <div class="nav-clean hidden" id="navClean">
+      <div class="nav-title">This page’s address was cleaned</div>
+      <div class="chips" id="navChips"></div>
+      <button class="btn link" id="restoreBtn">Page not working? Reload with the original link</button>
+    </div>
+
+    <div class="guard-note hidden" id="guardNote"></div>
+  </section>
+
+  <section class="stats" id="stats">
+    <div class="stat"><div class="num" id="statClicks">0</div><div class="lbl">links cleaned</div></div>
+    <div class="stat"><div class="num" id="statParams">0</div><div class="lbl">trackers removed</div></div>
+  </section>
+
+  <section class="block">
+    <div class="block-head">
+      <h2>Recent</h2>
+      <button class="btn link small" id="clearRecent">Clear</button>
+    </div>
+    <ul class="recent" id="recent"></ul>
+    <div class="empty faint" id="recentEmpty">Nothing yet. Click a link with trackers and it’ll show up here.</div>
+  </section>
+
+  <section class="block">
+    <h2>Clean a link</h2>
+    <input type="url" id="cleanInput" placeholder="Paste a link to clean it…" spellcheck="false" autocomplete="off">
+    <div class="clean-out hidden" id="cleanOut">
+      <div class="clean-url" id="cleanUrl"></div>
+      <div class="clean-foot">
+        <div class="chips" id="cleanChips"></div>
+        <button class="btn primary small" id="copyBtn">Copy</button>
+      </div>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <a href="#" id="openSettings">Settings</a>
+    <span class="faint" id="version"></span>
+  </footer>
+
+  <script src="../shared/rules.js"></script>
+  <script src="../shared/cleaner.js"></script>
+  <script src="../shared/settings.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>
