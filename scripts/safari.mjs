@@ -85,8 +85,12 @@ if (unknown.length) {
 await fsp.mkdir(EXT_RESOURCES, { recursive: true }); // not in git — filled from dist/safari
 for (const n of fs.readdirSync(EXT_RESOURCES)) await fsp.rm(path.join(EXT_RESOURCES, n), { recursive: true, force: true });
 for (const n of entries) await fsp.cp(path.join(DIST, n), path.join(EXT_RESOURCES, n), { recursive: true });
-// Keep the app's version in step with package.json.
-fs.writeFileSync(PBXPROJ, pbx.replace(/MARKETING_VERSION = [^;]+;/g, `MARKETING_VERSION = ${pkg.version};`));
+// Keep the app's version in step with package.json, and keep the project in the
+// Xcode 16 file format (77): newer Xcodes save a format older ones can't open,
+// and the project uses nothing newer.
+fs.writeFileSync(PBXPROJ, pbx
+  .replace(/MARKETING_VERSION = [^;]+;/g, `MARKETING_VERSION = ${pkg.version};`)
+  .replace(/objectVersion = (\d+);/, (m, v) => (Number(v) > 77 ? 'objectVersion = 77;' : m)));
 console.log(`  ${entries.length} items → ${path.relative(ROOT, EXT_RESOURCES)}  (v${pkg.version})`);
 
 // ---------------------------------------------------------------------------
