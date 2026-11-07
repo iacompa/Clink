@@ -72,7 +72,9 @@ const MUST_CLEAN = [
   ['https://r.search.yahoo.com/_ylt=Awr/RV=2/RE=1700000000/RO=10/RU=https%3a%2f%2fexample.com%2fpage%3futm_source%3dyahoo/RK=2/RS=abc-',
     'https://example.com/page'],
   ['https://steamcommunity.com/linkfilter/?u=https%3A%2F%2Fexample.com%2F', 'https://example.com/'],
-  ['https://www.linkedin.com/safety/go?url=https%3A%2F%2Fexample.com%2Fx%3Ftrk%3Dabc&trk=flagship', 'https://example.com/x?trk=abc'],
+  // LinkedIn's "leaving LinkedIn" safety page is kept (never bypass a safety warning); only its own tracker goes
+  ['https://www.linkedin.com/safety/go?url=https%3A%2F%2Fexample.com%2Fx%3Ftrk%3Dabc&trk=flagship',
+    'https://www.linkedin.com/safety/go?url=https%3A%2F%2Fexample.com%2Fx%3Ftrk%3Dabc'],
   ['https://href.li/?https://example.com/page', 'https://example.com/page'],
   ['https://disq.us/url?url=https%3A%2F%2Fexample.com%2Fpage%3AkfR3abcdefghijklmnopqrstu&cuid=1', 'https://example.com/page'],
   // nested: Google → Facebook → destination
@@ -80,6 +82,24 @@ const MUST_CLEAN = [
     'https://example.com/x?ok=1'],
   // double-encoded target
   ['https://out.reddit.com/x?url=https%253A%252F%252Fexample.com%252F', 'https://example.com/'],
+  // Steam passes everything after url= through, unencoded &-params included
+  ['https://steamcommunity.com/linkfilter/?url=https://www.youtube.com/watch?v=dQw4w9WgXcQ&t=42s&list=PL1',
+    'https://www.youtube.com/watch?v=dQw4w9WgXcQ&t=42s&list=PL1'],
+  ['https://steamcommunity.com/linkfilter/?url=https://example.com/?a=1&b=2', 'https://example.com/?a=1&b=2'],
+  // a redirect keeps the #fragment of the link that was clicked (the target's own fragment wins)
+  ['https://href.li/?https://example.com/page#section', 'https://example.com/page#section'],
+  ['https://www.google.com/url?q=https://example.com/docs&sa=D#install', 'https://example.com/docs#install'],
+  ['https://www.google.com/url?q=https://example.com/a%23own&sa=D#wrapper', 'https://example.com/a#own'],
+
+  // ---- regressions
+  // Substack's app links need publication_id + post_id (400 without them)
+  ['https://substack.com/app-link/post?publication_id=1&post_id=137200077&utm_source=post-email-title&utm_campaign=email-post-title&isFreemail=true&r=2abcd',
+    'https://substack.com/app-link/post?publication_id=1&post_id=137200077'],
+  // "adopting" contains "optin" but isn't an opt-in page
+  ['https://example.com/adopting-a-dog?utm_source=x&page=2', 'https://example.com/adopting-a-dog?page=2'],
+  // Amazon /ref= in a non-product path: the query trackers still go
+  ['https://www.amazon.com/gp/bestsellers/electronics/ref=zg_bs_nav_0?fbclid=IwAR123&utm_source=fb',
+    'https://www.amazon.com/gp/bestsellers/electronics/ref=zg_bs_nav_0'],
 ];
 
 // URLs Clink must leave EXACTLY as they are.
@@ -121,6 +141,14 @@ const MUST_NOT_CHANGE = [
   'https://example.com/products/mug?_sid=abc&_pos=2',
   'https://www.pinterest.com/user/board/?invite_code=abc',
   'https://www.reddit.com/r/x/comments/abc/title/?context=3',
+  // safety warning pages are never skipped
+  'https://www.facebook.com/flx/warn/?u=https%3A%2F%2Fexample.com%2F&h=AT0abc',
+  // YouTube only follows *relative* attribution links — unwrapping others would be an open redirect
+  'https://www.youtube.com/attribution_link?u=https%3A%2F%2Fexample.com%2Fphish',
+  'https://www.youtube.com/attribution_link?u=%2F%2Fevil.example%2Fx',
+  // opt-in / opt-out pages keep their IDs
+  'https://news.example.com/opting-out?mc_eid=abc&utm_source=x',
+  'https://lists.example.com/newsletter-optin/confirm?mc_eid=1&utm_source=x',
 ];
 
 test('cleans tracking junk', () => {

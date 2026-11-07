@@ -10,8 +10,12 @@
  * URL is fully cleaned in one internal redirect per group (≤ ~5 hops, all
  * in-browser, no network round-trips).
  *
- * flavor 'standard' → Chrome & Firefox (urlFilter "^" separators, regex rules)
- * flavor 'safari'   → plain "?p=" / "&p=" filters only; no regex, no
+ * Parameters are matched as "?p=" / "&p=" — never "^p=", whose "^" would also
+ * match a "/" and fire on a path like amazon.com/…/ref=x (a no-op redirect
+ * that stops every other rule).
+ *
+ * flavor 'standard' → Chrome & Firefox (adds regex rules)
+ * flavor 'safari'   → no regex, no
  *                     requestMethods/initiatorDomains (Safari's engine is
  *                     built on WebKit content blockers and is stricter).
  */
@@ -63,8 +67,7 @@ export function generateRulesets(flavor) {
           },
         });
       } else {
-        const filters = flavor === 'safari' ? [`?${t}=`, `&${t}=`] : [`^${t}=`];
-        for (const urlFilter of filters) {
+        for (const urlFilter of [`?${t}=`, `&${t}=`]) {
           push(set, { priority, action, condition: { ...base(), ...domainCond, urlFilter, isUrlFilterCaseSensitive: true } });
         }
       }
@@ -112,10 +115,14 @@ export function generateRulesets(flavor) {
   if (flavor === 'standard') allow({ initiatorDomains: R.SAFETY.toolHosts });
 
   for (const kw of R.SAFETY.urlKeywords) allow({ urlFilter: kw, isUrlFilterCaseSensitive: false });
+  // Word-start keywords: preceded by a separator ("^" = anything but a letter,
+  // digit, _ - . %) or by - _ . — matches the page layer's rule.
+  for (const kw of R.SAFETY.urlWordStartKeywords) {
+    for (const pre of ['^', '-', '_', '.']) allow({ urlFilter: pre + kw, isUrlFilterCaseSensitive: false });
+  }
 
   for (const p of R.SAFETY.signatureParams) {
-    const filters = flavor === 'safari' ? [`?${p}=`, `&${p}=`] : [`^${p}=`];
-    for (const urlFilter of filters) allow({ urlFilter, isUrlFilterCaseSensitive: false });
+    for (const urlFilter of [`?${p}=`, `&${p}=`]) allow({ urlFilter, isUrlFilterCaseSensitive: false });
   }
 
   if (flavor === 'standard') {

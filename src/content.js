@@ -10,6 +10,11 @@
  *  • Re-cleans a link the instant a page script swaps its href at click time
  *    (Gmail, Facebook and Google do this), before the browser follows it.
  *  • Optionally cleans URLs you copy from page text.
+ *  • Tells Link Guard which link you opened, so a cleaned link that fails is
+ *    restored just like a cleaned address.
+ *
+ * It never touches what you are editing (contenteditable / designMode), in-page
+ * anchors (#section), local files or local dev sites.
  *
  * The network layer (declarativeNetRequest) independently cleans every
  * navigation, so anything this layer misses is still caught there.
@@ -25,6 +30,7 @@
   if (!api || !C || !S) return;
 
   const LINK_SELECTOR = 'a[href], area[href]';
+  const EDITABLE = '[contenteditable]:not([contenteditable="false" i])';
   const isTop = window === window.top;
 
   let settings = null;
@@ -32,10 +38,11 @@
   let active = false;
   let pageCleaned = 0;
 
-  // element → { original, cleaned, removed, unwrapped }
+  // element → { raw, original, target, cleaned, removed, unwrapped }
   const records = new WeakMap();
-  // element → number of times we've rewritten it (guards against fights with page scripts)
+  // element → { href, n, t }: repeated rewrites of the same href (a page script fighting us)
   const rewrites = new WeakMap();
+  let optionsKey = '';
 
   // -------------------------------------------------------------------------
   // Activation
@@ -59,22 +66,44 @@
     return '';
   }
 
-  function computeActive() {
-    if (!settings || !settings.enabled) return false;
-    const hosts = [location.hostname, topHostname()].filter(Boolean);
-    for (const h of hosts) {
-      if (C.isQuietPage(h)) return false;
-      if (C.isPausedHost(h, options.paused)) return false;
+  /** This frame's host; about:blank / srcdoc frames inherit their creator's. */
+  function ownHostname() {
+    if (location.hostname) return location.hostname;
+    try {
+      return new URL(self.origin).hostname;
+    } catch (_) {
+      return ''; // opaque origin
     }
-    return true;
+  }
+
+  function pageHosts() {
+    return [ownHostname(), topHostname()].filter(Boolean);
+  }
+
+  /** Local files, pages without a host, local dev sites and marketing tools. */
+  function isQuietHere() {
+    if (location.protocol === 'file:') return true;
+    const hosts = pageHosts();
+    return !hosts.length || hosts.some((h) => C.isQuietPage(h));
+  }
+
+  function computeActive() {
+    if (!settings || !settings.enabled || isQuietHere()) return false;
+    return !pageHosts().some((h) => C.isPausedHost(h, options.paused));
   }
 
   function applySettings(raw) {
     const wasActive = active;
     settings = S.normalize(raw);
     options = C.optionsFromSettings(settings);
+    const key = JSON.stringify(options);
+    const changed = key !== optionsKey;
+    optionsKey = key;
     active = computeActive();
     if (active) {
+      // Categories, paused or Link-Guarded sites changed: re-clean every link
+      // from its original, so e.g. turning a category off brings its tags back.
+      if (wasActive && changed) restoreAll();
       startObserver();
       scan(document);
     } else {
@@ -99,9 +128,22 @@
     }
   }
 
+  /** Is this element part of something the user is editing (a draft, a CMS field)? */
+  function inEditor(el) {
+    if (el.ownerDocument && el.ownerDocument.designMode === 'on') return true;
+    return !!(el.closest && el.closest(EDITABLE));
+  }
+
+  function documentUrlWithoutHash() {
+    const u = document.URL;
+    const i = u.indexOf('#');
+    return i === -1 ? u : u.slice(0, i);
+  }
+
   /** Clean one link element. Returns true if it was changed. */
   function processLink(el) {
     if (!active || !el || !el.getAttribute) return false;
+    if (inEditor(el)) return false; // never rewrite the user's own content
 
     if (settings.removePing && el.hasAttribute('ping')) {
       el.removeAttribute('ping');
@@ -110,18 +152,33 @@
     const href = hrefOf(el);
     if (!href || !C.mightNeedCleaning(href)) return false;
 
+    // An in-page anchor (#faq) resolves against this page's own URL; "cleaning"
+    // it would turn a jump within the page into a reload of a different URL.
+    const hash = href.indexOf('#');
+    if (hash !== -1 && href.slice(0, hash) === documentUrlWithoutHash()) return false;
+
     const prev = records.get(el);
     if (prev && prev.cleaned === href) return false; // our own value
 
     const res = C.clean(href, options);
     if (!res.changed) return false;
 
-    const n = (rewrites.get(el) || 0) + 1;
-    if (n > 25) return false; // a page script keeps fighting us; let the network layer handle it
-    rewrites.set(el, n);
+    // A page script that keeps putting the same tracking URL back is fighting
+    // us: stop after a burst and let the network layer handle that link.
+    // (Different URLs — an element recycled by a virtual list — never count.)
+    const now = Date.now();
+    const fight = rewrites.get(el);
+    if (fight && fight.href === href && now - fight.t < 2000) {
+      if (++fight.n > 25) return false;
+      fight.t = now;
+    } else {
+      rewrites.set(el, { href, n: 1, t: now });
+    }
 
     records.set(el, {
+      raw: el.getAttribute('href'),
       original: href,
+      target: res.target || href, // what Link Guard restores: the destination, with its parameters
       cleaned: res.url,
       removed: res.removed,
       unwrapped: res.unwrapped,
@@ -143,13 +200,30 @@
     }
   }
 
-  function restoreAll() {
-    const links = document.querySelectorAll(LINK_SELECTOR);
-    for (const el of links) {
-      const rec = records.get(el);
-      if (rec && el.getAttribute('href') === rec.cleaned) el.setAttribute('href', rec.original);
-      records.delete(el);
+  /** Put one link back exactly as the page wrote it. */
+  function restoreLink(el) {
+    const rec = records.get(el);
+    if (!rec) return false;
+    records.delete(el);
+    rewrites.delete(el);
+    if (el.getAttribute('href') === rec.cleaned) el.setAttribute('href', rec.raw);
+    return true;
+  }
+
+  function restoreWithin(rootNode) {
+    let n = 0;
+    if (rootNode.matches && rootNode.matches(LINK_SELECTOR) && restoreLink(rootNode)) n++;
+    if (rootNode.querySelectorAll) {
+      for (const el of rootNode.querySelectorAll(LINK_SELECTOR)) if (restoreLink(el)) n++;
     }
+    if (n) {
+      pageCleaned = Math.max(0, pageCleaned - n);
+      scheduleReport();
+    }
+  }
+
+  function restoreAll() {
+    for (const el of document.querySelectorAll(LINK_SELECTOR)) restoreLink(el);
     pageCleaned = 0;
     scheduleReport();
   }
@@ -166,6 +240,12 @@
     for (const m of mutations) {
       if (m.type === 'attributes') {
         const t = m.target;
+        if (m.attributeName === 'contenteditable') {
+          // Editing starts: hand the author their links back untouched. Editing ends: clean again.
+          if (inEditor(t)) restoreWithin(t);
+          else scan(t);
+          continue;
+        }
         if (t.matches && t.matches(LINK_SELECTOR)) processLink(t);
         else if (m.attributeName === 'ping' && t.hasAttribute && t.hasAttribute('ping') && settings.removePing) {
           t.removeAttribute('ping');
@@ -187,7 +267,7 @@
       subtree: true,
       childList: true,
       attributes: true,
-      attributeFilter: ['href', 'ping'],
+      attributeFilter: ['href', 'ping', 'contenteditable'],
     });
   }
 
@@ -212,22 +292,34 @@
   }
 
   const activated = new WeakSet();
+  // Ways a link gets opened: click, middle/modified click, context menu "Open in new tab", drag to tab bar.
+  const OPEN_EVENTS = new Set(['click', 'auxclick', 'contextmenu', 'dragstart']);
+  let lastExpect = { event: null, url: '' };
 
   function onInteract(e) {
     if (!active) return;
     const el = linkFromEvent(e);
     if (!el) return;
     processLink(el);
-    if ((e.type === 'click' || e.type === 'auxclick') && records.has(el) && !activated.has(el)) {
-      const rec = records.get(el);
-      if (el.getAttribute('href') === rec.cleaned) {
-        activated.add(el);
-        report('clink:activated', {
-          host: safeHost(rec.cleaned),
-          removed: rec.removed,
-          unwrapped: rec.unwrapped,
-        });
-      }
+    const rec = records.get(el);
+    if (!rec || el.getAttribute('href') !== rec.cleaned) return;
+
+    if ((e.type === 'click' || e.type === 'auxclick') && !activated.has(el)) {
+      activated.add(el);
+      report('clink:activated', {
+        host: safeHost(rec.cleaned),
+        removed: rec.removed,
+        unwrapped: rec.unwrapped,
+      });
+    }
+
+    // Link Guard: if this cleaned link fails to load, the background re-opens
+    // the destination with its parameters. (Once per event and URL — the click
+    // listeners run twice, and a page script may swap the href in between.)
+    if (OPEN_EVENTS.has(e.type) && settings.linkGuard && rec.removed.length &&
+        !(lastExpect.event === e && lastExpect.url === rec.cleaned)) {
+      lastExpect = { event: e, url: rec.cleaned };
+      report('clink:expect', { cleaned: rec.cleaned, original: rec.target, removed: rec.removed });
     }
   }
 
@@ -302,7 +394,7 @@
   function hello() {
     report('clink:hello', {
       url: location.href,
-      state: !settings.enabled ? 'off' : active ? 'on' : C.isQuietPage(location.hostname) ? 'quiet' : 'paused',
+      state: !settings.enabled ? 'off' : active ? 'on' : isQuietHere() ? 'quiet' : 'paused',
     });
   }
 

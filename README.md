@@ -33,9 +33,11 @@ what the design is built around:
    - signed links: S3, Google Cloud, CloudFront, `sig=`/`signature=`
    - sign-in and checkout pages: Google, Microsoft, Apple, PayPal, Stripe, Shopify
    - marketing dashboards such as Google Analytics and campaign URL builders
-   - `localhost`, `.test`, `.local` and private IPs
-3. **Link Guard** (Chrome and Firefox) watches every navigation Clink cleaned. If the cleaned
-   page fails to load (a 404 or similar error, or a redirect loop because the site insists
+   - `localhost`, `.test`, `.local`, private IPs and local files
+   - anything you're editing: links in an email draft, a CMS or any rich-text editor
+   - in-page anchors (`#section`), so jumping within a page never turns into a reload
+3. **Link Guard** (Chrome and Firefox) watches every navigation Clink cleaned, whether it's
+   an address you typed or a link you clicked on a page. If the cleaned page fails to load (a 404 or similar error, or a redirect loop because the site insists
    on its tracker), Clink reopens the original link at once. It also remembers that site, so
    it never breaks there again. You can see and undo what it learned in Settings.
 4. **You stay in control.** You can pause Clink per site, toggle each category (for
@@ -173,8 +175,9 @@ URL (and, if it's risky, a must-not-change URL) to `test/unit/cleaner.test.mjs`.
 - **Opaque short links** (`t.co`, `bit.ly`, email click-trackers) can't be unwrapped without
   visiting them. Clink cleans where they lead instead: the trackers are stripped from the
   redirect target before that page loads.
-- **Corporate security scanners** (Outlook Safe Links, Proofpoint) are intentionally *not*
-  bypassed.
+- **Security checks are never skipped.** Corporate link scanners (Outlook Safe Links,
+  Proofpoint) and "you're leaving this site" warning pages (Facebook, LinkedIn) are
+  intentionally *not* unwrapped; Clink only removes their tracking parameters.
 - Firefox's own *Query Parameter Stripping* (in Strict tracking protection) works alongside
   Clink; Clink covers far more parameters and sites.
 

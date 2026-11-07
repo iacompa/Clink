@@ -100,7 +100,8 @@
     matchPath: pathMatcher(r),
     params: r.params || [],
     decode: r.decode || null,
-    allowRelative: !!r.allowRelative,
+    relativeOnly: !!r.relativeOnly,
+    rawRest: !!r.rawRest,
     stripSuffix: r.stripSuffix ? new RegExp(r.stripSuffix) : null,
   }));
 
@@ -109,6 +110,11 @@
     authHosts: R.SAFETY.authHosts,
     localDomains: R.SAFETY.localDomains,
     urlKeywords: lower(R.SAFETY.urlKeywords),
+    // "Starts a word": not preceded by a letter, digit or % (same rule as the
+    // network layer's "^" / "-" / "_" / "." filters for these keywords).
+    wordStartKeywords: lower(R.SAFETY.urlWordStartKeywords).map(
+      (kw) => new RegExp('(?:^|[^a-z0-9%])' + kw.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
+    ),
     signatureParams: toSet(R.SAFETY.signatureParams),
   };
 
@@ -168,6 +174,9 @@
     const haystack = (host + u.pathname + u.search).toLowerCase();
     for (const kw of SAFETY.urlKeywords) {
       if (haystack.includes(kw)) return 'preferences';
+    }
+    for (const re of SAFETY.wordStartKeywords) {
+      if (re.test(haystack)) return 'preferences';
     }
     for (const k of queryKeys(u.search)) {
       if (SAFETY.signatureParams.has(k.toLowerCase())) return 'signed';
@@ -289,7 +298,12 @@
     } else if (r.decode === 'rawQuery') {
       if (u.search.length > 1) candidates.push(u.search.slice(1));
     } else {
+      const raw = u.search.slice(1);
       for (const p of r.params) {
+        // e.g. Steam: ?url=https://site/x?a=1&b=2 — the target is the raw rest.
+        if (r.rawRest && raw.toLowerCase().startsWith(p + '=') && /^https?:\/\//i.test(raw.slice(p.length + 1))) {
+          candidates.push(raw.slice(p.length + 1));
+        }
         const v = u.searchParams.get(p);
         if (v) candidates.push(r.decode === 'bing' ? decodeBing(v) : v);
       }
@@ -299,7 +313,9 @@
       if (!c) continue;
       c = c.trim();
       if (/^https?%3A/i.test(c)) c = safeDecode(c); // double-encoded
-      if (r.allowRelative && c.startsWith('/') && !c.startsWith('//')) {
+      if (r.relativeOnly) {
+        // Only same-site paths; an absolute target would turn the wrapper into an open redirect.
+        if (!c.startsWith('/') || c.startsWith('//') || c.startsWith('/\\')) continue;
         c = u.origin + c;
       }
       if (r.stripSuffix) {
@@ -309,6 +325,7 @@
       if (!/^https?:\/\/[^/]/i.test(c)) continue;
       try {
         const t = new URL(c);
+        if (r.relativeOnly && t.origin !== u.origin) continue;
         if ((t.protocol === 'http:' || t.protocol === 'https:') && t.href !== u.href) return t;
       } catch (_) {
         /* not a URL — try the next candidate */
@@ -355,10 +372,15 @@
         const w = unwrapOnce(u, host, opts);
         if (!w) break;
         res.unwrapped.push(w.name);
+        // Like a real redirect, the destination inherits the clicked link's #fragment.
+        if (!w.target.hash && u.hash) w.target.hash = u.hash;
         u = w.target;
         changed = true;
       }
     }
+
+    // Where the link really goes, before any parameter is removed (Link Guard restores this).
+    if (res.unwrapped.length) res.target = u.href;
 
     const host = normHost(u.hostname);
     const reason = isPausedHost(host, opts.paused) ? 'paused' : protectedReason(u, host);

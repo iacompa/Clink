@@ -28,7 +28,8 @@ const SKIP = !HAVE_FIREFOX && 'Firefox not installed';
 const UUID = 'c1a7c1a7-0000-4000-8000-c11c4c11c400';
 const EXT_ORIGIN = `moz-extension://${UUID}`;
 const HOSTS = ['shop.example.com', 'links.example.com', 'dest.example.com', 'www.google.com', 'guard.example.com',
-  'loop.example.com', 'click.mailer.example.com', 'www.amazon.com', 'youtu.be', 'news.example.com', 'tracker.example.com'];
+  'loop.example.com', 'click.mailer.example.com', 'www.amazon.com', 'youtu.be', 'news.example.com', 'tracker.example.com',
+  'pageguard.example.com', 'www.wguard.example.com', 'wguard.example.com'];
 
 /** The installed Firefox: the macOS app, or `firefox` on the PATH (Linux, CI). */
 function findFirefox() {
@@ -308,6 +309,39 @@ test('Firefox: links inside shadow DOM are cleaned at click time', { skip: SKIP 
   await go(`http://links.example.com:${P}/links`);
   await click(`document.getElementById('host').shadowRoot.getElementById('shadow')`);
   assert.equal(strip(await waitForUrl(/from-shadow/)), 'http://dest.example.com/from-shadow');
+});
+
+test('Firefox: links inside rich-text editors are never rewritten', { skip: SKIP }, async () => {
+  await go(`http://links.example.com:${P}/links`);
+  await until(() => evalIn(`!!document.getElementById('edlate') && document.getElementById('plain').getAttribute('href').indexOf('utm_') < 0`), 'page scan');
+  const get = (id) => evalIn(`document.getElementById('${id}').getAttribute('href')`).then(strip);
+  assert.equal(await get('edlink'), 'http://dest.example.com/edited?utm_source=draft&x=1');
+  assert.equal(await get('edlate'), 'http://dest.example.com/pasted?fbclid=x&p=1');
+  assert.equal(await get('cmslink'), 'http://dest.example.com/cms?y=1');
+  await evalIn(`document.getElementById('cms').setAttribute('contenteditable', 'true')`);
+  await until(async () => (await get('cmslink')).includes('utm_source=cms'), 'editable region to get its link back');
+});
+
+test('Firefox: same-document #links are left alone', { skip: SKIP }, async () => {
+  await go(`http://links.example.com:${P}/links`);
+  const doc = `document.getElementById('frame').contentDocument`;
+  await until(() => evalIn(`!!${doc}.getElementById('framelink') && !${doc}.getElementById('framelink').getAttribute('href').includes('utm_')`), 'frame scan');
+  assert.equal(await evalIn(`${doc}.getElementById('hashlink').getAttribute('href')`), '#faq');
+});
+
+test('Firefox: Link Guard also covers links the page layer cleaned', { skip: SKIP }, async () => {
+  await go(`http://links.example.com:${P}/links`);
+  await until(() => evalIn(`document.getElementById('guardlink').getAttribute('href').indexOf('utm_') < 0`), 'guardlink cleaned');
+  await click(`document.getElementById('guardlink')`);
+  await waitForUrl(/pageguard\.example\.com.*utm_source=promo/);
+  await until(async () => /needs-utm ok/.test(await evalIn(`document.body ? document.body.textContent : ''`)), 'restored page');
+  await until(async () => ((await settings()).guardedSites || []).some((g) => g.host === 'pageguard.example.com'), 'pageguard remembered');
+
+  await go(`http://links.example.com:${P}/links`);
+  await until(() => evalIn(`document.getElementById('plain').getAttribute('href').indexOf('utm_') < 0`), 'page scan');
+  await click(`document.getElementById('wguardlink')`);
+  await waitForUrl(/\/\/wguard\.example\.com.*utm_source=promo/);
+  await until(async () => /needs-utm ok/.test(await evalIn(`document.body ? document.body.textContent : ''`)), 'restored page');
 });
 
 test('Firefox: Link Guard restores a link that 404s and remembers the site', { skip: SKIP }, async () => {

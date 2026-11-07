@@ -10,7 +10,7 @@ import assert from 'node:assert/strict';
 import path from 'node:path';
 import fs from 'node:fs/promises';
 import os from 'node:os';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import { chromium } from 'playwright';
 import { startServer } from './server.mjs';
 
@@ -210,6 +210,111 @@ test('copying a URL from page text copies the clean version', async () => {
   await page.close();
 });
 
+test('links inside rich-text editors are never rewritten', async () => {
+  await setSettings({});
+  const page = await openTab(`http://links.example.com:${P}/links`);
+  await page.waitForSelector('#edlate');
+  await sleep(150);
+  const href = (sel) => page.$eval(sel, (a) => a.getAttribute('href')).then(strip);
+  assert.equal(await href('#edlink'), 'http://dest.example.com/edited?utm_source=draft&x=1');
+  assert.equal(await href('#edlate'), 'http://dest.example.com/pasted?fbclid=x&p=1', 'a link pasted into the editor');
+  await page.click('#edlink'); // places the caret; must not rewrite the draft
+  await sleep(50);
+  assert.equal(await href('#edlink'), 'http://dest.example.com/edited?utm_source=draft&x=1');
+  // A region that becomes editable (a CMS "edit" button) gets its links back exactly as written.
+  assert.equal(await href('#cmslink'), 'http://dest.example.com/cms?y=1');
+  await page.$eval('#cms', (el) => el.setAttribute('contenteditable', 'true'));
+  await sleep(50);
+  assert.equal(await href('#cmslink'), 'http://dest.example.com/cms?utm_source=cms&y=1');
+  // …and cleaned again once editing ends.
+  await page.$eval('#cms', (el) => el.removeAttribute('contenteditable'));
+  await sleep(50);
+  assert.equal(await href('#cmslink'), 'http://dest.example.com/cms?y=1');
+  await page.close();
+});
+
+test('same-document #links are left alone, even when the page URL has tracking', async () => {
+  const page = await openTab(`http://links.example.com:${P}/links`);
+  const frame = await (await page.waitForSelector('#frame')).contentFrame();
+  await frame.waitForSelector('#framelink');
+  await sleep(150);
+  // The page layer is running in the frame…
+  assert.equal(strip(await frame.$eval('#framelink', (a) => a.getAttribute('href'))), 'http://dest.example.com/framed?z=1');
+  // …but an in-page anchor must stay an in-page anchor (no reload, no lost state).
+  assert.equal(await frame.$eval('#hashlink', (a) => a.getAttribute('href')), '#faq');
+  await frame.evaluate(() => (window.__sameDoc = 1));
+  await frame.click('#hashlink');
+  await sleep(100);
+  assert.match(frame.url(), /\/frame\?utm_source=partner&id=7#faq$/);
+  assert.equal(await frame.evaluate(() => window.__sameDoc), 1, 'the frame was not reloaded');
+  await page.close();
+});
+
+test('a link element recycled for many items keeps being cleaned', async () => {
+  const page = await openTab(`http://links.example.com:${P}/links`);
+  await page.waitForFunction(() => window.__recycledDone === true);
+  await sleep(50);
+  assert.equal(strip(await page.$eval('#recycled', (a) => a.getAttribute('href'))), 'http://dest.example.com/item/30?i=30');
+  await page.close();
+});
+
+test('changing settings re-cleans the links already on the page', async () => {
+  await setSettings({});
+  const page = await openTab(`http://links.example.com:${P}/links`);
+  await sleep(150);
+  const plain = () => page.$eval('#plain', (a) => a.getAttribute('href')).then(strip);
+  assert.equal(await plain(), 'http://dest.example.com/article?id=7');
+  await setSettings({ categories: { trackers: true, campaign: false, sites: true, affiliate: true } });
+  await sleep(150);
+  assert.equal(await plain(), 'http://dest.example.com/article?utm_source=x&id=7', 'campaign tags are kept once that category is off');
+  await setSettings({});
+  await sleep(150);
+  assert.equal(await plain(), 'http://dest.example.com/article?id=7');
+  await page.close();
+});
+
+test('local files are left alone (like local dev sites)', async () => {
+  const file = path.join(userDir, 'local-page.html');
+  await fs.writeFile(file, '<!doctype html><a id="a" href="https://dest.example.com/x?utm_source=x&k=1" ping="https://t.example.com/">x</a>');
+  const page = await openTab(pathToFileURL(file).href);
+  await sleep(300);
+  assert.equal(await page.$eval('#a', (a) => a.getAttribute('href')), 'https://dest.example.com/x?utm_source=x&k=1');
+  assert.equal(await page.$eval('#a', (a) => a.hasAttribute('ping')), true);
+  await page.close();
+});
+
+async function pollSettings(ok, what) {
+  for (let i = 0; i < 50; i++) {
+    const s = await getSettings();
+    if (ok(s)) return s;
+    await sleep(100);
+  }
+  throw new Error(`timed out waiting for ${what}`);
+}
+
+test('Link Guard also covers links the page layer cleaned', async () => {
+  await setSettings({});
+  const page = await openTab(`http://links.example.com:${P}/links`);
+  await sleep(150);
+  assert.equal(strip(await page.$eval('#guardlink', (a) => a.getAttribute('href'))), 'http://pageguard.example.com/needs-utm?a=1');
+  await page.click('#guardlink');
+  await waitForUrl(page, /pageguard\.example\.com.*utm_source=promo/);
+  assert.match(await page.textContent('body'), /needs-utm ok/, 'the original link was restored and works');
+  const s = await pollSettings((x) => x.guardedSites.some((g) => g.host === 'pageguard.example.com'), 'pageguard to be remembered');
+  assert.deepEqual(s.guardedSites.find((g) => g.host === 'pageguard.example.com').params, ['utm_source']);
+  // Links to a remembered site are no longer rewritten on the page either.
+  await page.goto(`http://links.example.com:${P}/links`);
+  await sleep(150);
+  assert.match(await page.$eval('#guardlink', (a) => a.getAttribute('href')), /utm_source=promo/);
+
+  // The site redirects www → bare host: the retry must cover the whole site, not just "www.".
+  await page.click('#wguardlink');
+  await waitForUrl(page, /\/\/wguard\.example\.com.*utm_source=promo/);
+  assert.match(await page.textContent('body'), /needs-utm ok/);
+  await pollSettings((x) => x.guardedSites.some((g) => g.host === 'wguard.example.com'), 'wguard to be remembered');
+  await page.close();
+});
+
 test('Link Guard: a link that 404s without its parameter is restored and remembered', async () => {
   await setSettings({});
   const page = await openTab();
@@ -231,6 +336,16 @@ test('Link Guard: a link that 404s without its parameter is restored and remembe
   // …but other sites are still cleaned
   await page.goto(`http://other.example.com:${P}/x?utm_source=a&ok=1`);
   assert.equal(strip(page.url()), 'http://other.example.com/x?ok=1');
+  await page.close();
+});
+
+test('Link Guard: a cleaned address that the site redirects (www → bare) and then fails is restored', async () => {
+  await setSettings({});
+  const page = await openTab();
+  await page.goto(`http://www.netguard.example.com:${P}/needs-utm?utm_source=promo&a=1`).catch(() => {});
+  await waitForUrl(page, /\/\/netguard\.example\.com.*utm_source=promo/);
+  assert.match(await page.textContent('body'), /needs-utm ok/);
+  await pollSettings((x) => x.guardedSites.some((g) => g.host === 'netguard.example.com'), 'netguard to be remembered');
   await page.close();
 });
 

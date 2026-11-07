@@ -23,6 +23,15 @@ export function startServer() {
       res.end(page(title, body));
     };
 
+    if (url.pathname === '/needs-utm' && host.startsWith('www.')) {
+      // Canonical-host redirect (www → bare), keeping the query string.
+      res.writeHead(301, { location: `http://${host.slice(4)}:${P}${req.url}`, 'cache-control': 'no-store' });
+      return res.end();
+    }
+    if (url.pathname === '/frame') {
+      // An embedded page whose own URL carries tracking (iframes aren't cleaned by the network layer).
+      return html(200, 'frame', `<a id="hashlink" href="#faq">faq</a> <a id="framelink" href="http://dest.example.com:${P}/framed?utm_source=f&z=1">framed</a><h2 id="faq">FAQ</h2>`);
+    }
     if (url.pathname === '/needs-utm') {
       // A (hypothetical) site that 404s without its campaign parameter.
       return url.searchParams.has('utm_source') ? html(200, 'ok', '<p>needs-utm ok</p>') : html(404, 'not found', '<p>404</p>');
@@ -52,9 +61,29 @@ export function startServer() {
         <a id="keep" href="${d}/keep?ref=friend&t=10&s=2">keep</a>
         <a id="unsub" href="${d}/unsubscribe?mc_eid=abc&list=1">unsub</a>
         <a id="swapwrap" href="${d}/before-swap">swapwrap</a>
+        <a id="guardlink" href="http://pageguard.example.com:${P}/needs-utm?utm_source=promo&a=1">guardlink</a>
+        <a id="wguardlink" href="http://www.wguard.example.com:${P}/needs-utm?utm_source=promo&a=1">wguardlink</a>
+        <a id="recycled" href="${d}/item/0?utm_source=feed&i=0">recycled</a>
         <div id="host"></div>
+        <div id="editor" contenteditable="true"><p>Draft with <a id="edlink" href="${d}/edited?utm_source=draft&x=1">a link</a></p></div>
+        <div id="cms"><a id="cmslink" href="${d}/cms?utm_source=cms&y=1">cms</a></div>
+        <iframe id="frame" src="/frame?utm_source=partner&id=7"></iframe>
         <p id="copytext">${d}/copied?utm_source=copy&x=1</p>
         <script>
+          // A virtualised feed that recycles one <a> element for many different items.
+          (function next(i) {
+            if (i > 30) return void (window.__recycledDone = true);
+            document.getElementById('recycled').href = '${d}/item/' + i + '?utm_source=feed&i=' + i;
+            setTimeout(() => next(i + 1), 5);
+          })(1);
+          // A link pasted into the editor after load.
+          setTimeout(() => {
+            const a = document.createElement('a');
+            a.id = 'edlate';
+            a.href = '${d}/pasted?fbclid=x&p=1';
+            a.textContent = 'pasted';
+            document.querySelector('#editor p').append(a);
+          }, 50);
           // Like Gmail/Facebook: swap the href to a tracking redirect at mousedown time.
           document.getElementById('swapwrap').addEventListener('mousedown', (e) => {
             e.currentTarget.href = '${g}/url?q=' + encodeURIComponent('${d}/after-swap?gclid=1&ok=1');

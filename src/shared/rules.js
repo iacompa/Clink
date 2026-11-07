@@ -284,9 +284,10 @@
     {
       name: 'Substack',
       domains: ['substack.com'],
-      params: ['s', 'showWelcomeOnShare', 'publication_id', 'post_id', 'isFreemail'],
+      params: ['s', 'showWelcomeOnShare', 'isFreemail'],
       affiliate: ['r'],
-      // Deliberately kept: triedRedirect, token.
+      // Deliberately kept: triedRedirect, token, and publication_id + post_id
+      // (substack.com/app-link/post answers 400 without them).
     },
     {
       name: 'Booking.com',
@@ -326,22 +327,24 @@
   // and opaque shorteners (t.co, lnkd.in, bit.ly) whose target isn't in the URL.
   // ---------------------------------------------------------------------------
 
+  // Never listed here: safety-warning pages (Outlook Safe Links, Proofpoint,
+  // facebook.com/flx/warn, linkedin.com/safety/go). They exist to warn you
+  // about a link, so Clink doesn't skip them.
   const REDIRECTORS = [
     { name: 'Google', hostRe: GOOGLE_HOST_RE, path: '/url', params: ['url', 'q'] },
     { name: 'Google Scholar', hostRe: 'scholar\\.google\\.[a-z.]+', path: '/scholar_url', params: ['url'] },
     { name: 'Google Ads', hosts: ['www.googleadservices.com', 'googleadservices.com'], path: '/pagead/aclk', params: ['adurl'] },
     { name: 'Google Ads', hostRe: GOOGLE_HOST_RE, path: '/aclk', params: ['adurl'] },
     { name: 'Facebook', hosts: ['l.facebook.com', 'lm.facebook.com', 'l.messenger.com', 'www.facebook.com', 'm.facebook.com'], path: '/l.php', params: ['u'] },
-    { name: 'Facebook', hosts: ['www.facebook.com', 'm.facebook.com', 'facebook.com'], pathPrefix: '/flx/warn', params: ['u'] },
     { name: 'Instagram', hosts: ['l.instagram.com'], params: ['u'] },
     { name: 'Threads', hosts: ['l.threads.net', 'l.threads.com'], params: ['u'] },
     { name: 'WhatsApp', hosts: ['l.wl.co'], path: '/l', params: ['u'] },
     { name: 'YouTube', hosts: ['www.youtube.com', 'm.youtube.com', 'youtube.com'], path: '/redirect', params: ['q'] },
-    { name: 'YouTube', hosts: ['www.youtube.com', 'm.youtube.com', 'youtube.com'], path: '/attribution_link', params: ['u'], allowRelative: true },
+    { name: 'YouTube', hosts: ['www.youtube.com', 'm.youtube.com', 'youtube.com'], path: '/attribution_link', params: ['u'], relativeOnly: true }, // YouTube only follows same-site targets
     { name: 'Reddit', hosts: ['out.reddit.com'], params: ['url'] },
     { name: 'LinkedIn', hosts: ['www.linkedin.com', 'linkedin.com'], path: '/redir/redirect', params: ['url'] },
-    { name: 'LinkedIn', hosts: ['www.linkedin.com', 'linkedin.com'], path: '/safety/go', params: ['url'] },
-    { name: 'Steam', hosts: ['steamcommunity.com'], pathPrefix: '/linkfilter', params: ['u', 'url'] },
+    // Steam passes everything after a leading url= through as-is, '&'s included.
+    { name: 'Steam', hosts: ['steamcommunity.com'], pathPrefix: '/linkfilter', params: ['u', 'url'], rawRest: true },
     { name: 'VK', hosts: ['vk.com', 'm.vk.com', 'away.vk.com'], path: '/away.php', params: ['to'] },
     { name: 'Tumblr', hosts: ['t.umblr.com'], path: '/redirect', params: ['z'] },
     { name: 'DuckDuckGo', hosts: ['duckduckgo.com'], pathPrefix: '/l/', params: ['uddg'] },
@@ -394,12 +397,15 @@
     // preference / double-opt-in link that relies on the "tracking" IDs to know
     // who you are. Leave it alone so unsubscribing always works.
     urlKeywords: [
-      'unsubscribe', 'optout', 'opt-out', 'opt_out', 'optin', 'opt-in', 'double-opt',
+      'unsubscribe', 'double-opt',
       'manage-preferences', 'managepreferences', 'email-preferences', 'emailpreferences',
       'preference-center', 'preferences-center', 'preferencecenter', 'subscription-center',
       'subscriptioncenter', 'confirm-subscription', 'confirmsubscription',
       'subscribe/confirm',
     ],
+    // Same, but these must start a word ("/optin", "-opt-out"), so that
+    // "adopting" or "co-opting" in an article URL doesn't count.
+    urlWordStartKeywords: ['optout', 'opt-out', 'opt_out', 'optin', 'opt-in'],
     // Signed URLs: changing ANY query parameter invalidates the signature (403).
     signatureParams: [
       'x-amz-signature', 'x-amz-credential', 'x-goog-signature', 'x-goog-credential',

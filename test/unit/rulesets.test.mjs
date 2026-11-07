@@ -109,6 +109,13 @@ test('rulesets are structurally valid', () => {
 
 // URLs where the network layer should produce exactly what the page layer does.
 const AGREE = [
+  // a /ref= *path* segment must not stop the query trackers from being removed
+  'https://www.amazon.com/gp/bestsellers/electronics/ref=zg_bs_nav_0?fbclid=IwAR123&utm_source=fb',
+  'https://www.amazon.com/s/ref=nb_sb_noss?url=search-alias%3Daps&field-keywords=x&gclid=abc',
+  'https://substack.com/app-link/post?publication_id=1&post_id=137200077&utm_source=post-email-title&isFreemail=true',
+  'https://example.com/adopting-a-dog?utm_source=x&page=2',
+  'https://news.example.com/opting-out?mc_eid=abc&utm_source=x',
+  'https://lists.example.com/newsletter-optin/confirm?mc_eid=1&utm_source=x',
   'https://example.com/page?utm_source=newsletter&utm_medium=email&id=42',
   'https://example.com/?fbclid=IwAR3abc',
   'https://shop.example.com/p?gclid=abc&color=red',

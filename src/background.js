@@ -4,10 +4,11 @@
  *
  *  • Keeps the declarativeNetRequest rulesets in sync with the user's settings
  *    (category toggles, master switch, paused sites).
- *  • Link Guard: watches navigations Clink cleaned. If the cleaned URL fails
+ *  • Link Guard: watches navigations Clink cleaned — addresses cleaned by the
+ *    network rules and links cleaned on the page. If the cleaned URL fails
  *    (HTTP 4xx/500 or a redirect loop) it reloads the ORIGINAL link once with
- *    Clink bypassed for that tab; if the original works, the site is remembered
- *    so Clink never breaks it again.
+ *    Clink bypassed for that site in that tab; if the original works, the site
+ *    is remembered so Clink never breaks it again.
  *  • Per-tab badge counts, lifetime stats and a short "recent activity" log
  *    (host + parameter names only — never full URLs).
  */
@@ -143,11 +144,25 @@ async function updateBadge(tabId) {
   api.action.setIcon({ tabId, path: s.enabled && !paused ? ICONS_ON : ICONS_OFF }).catch(swallow);
 }
 
+function withoutHash(u) {
+  const s = String(u || '');
+  const i = s.indexOf('#');
+  return i === -1 ? s : s.slice(0, i);
+}
+
+/** Same document? (Request URLs never carry the #fragment; tab URLs may.) */
+function sameDoc(a, b) {
+  return withoutHash(a) === withoutHash(b);
+}
+
 function newPage(t, url) {
-  if (t.url === url) return;
+  if (sameDoc(t.url, url)) {
+    t.url = url; // a jump to #section is not a new page
+    return;
+  }
   t.url = url;
   t.frames = {};
-  if (t.nav && t.nav.cleaned !== url) t.nav = null;
+  if (t.nav && !sameDoc(t.nav.cleaned, url)) t.nav = null;
 }
 
 api.tabs.onRemoved.addListener((tabId) => {
@@ -160,7 +175,7 @@ api.tabs.onUpdated.addListener((tabId, info) => {
   if (info.status === 'loading' && info.url) {
     restoreTabs().then(() => {
       const t = tabState(tabId);
-      if (t.url !== info.url && !(t.nav && t.nav.cleaned === info.url)) {
+      if (!sameDoc(t.url, info.url) && !(t.nav && sameDoc(t.nav.cleaned, info.url))) {
         newPage(t, info.url);
         updateBadge(tabId);
         persistTabs();
@@ -211,12 +226,43 @@ async function getRecent() {
 // Network-layer observation + Link Guard (Chrome & Firefox; Safari lacks webRequest)
 // ---------------------------------------------------------------------------
 
-/** requestId → { tabId, dirty, started }: the last URL in a navigation chain that Clink would clean. */
+/** requestId → { tabId, dirty, started, … }: the last URL in a navigation chain that Clink would clean. */
 const pending = new Map();
 /** tabId → { host, original, removed, ruleId, started, requestId, manual } */
 const trials = new Map();
 const recentRecoveries = new Map();
 let nextTrialRuleId = 1;
+/** requestId → { url, time }: where each top-level navigation started. */
+const firstUrls = new Map();
+/** cleaned URL (no #) → { original, removed, time }: links the page layer cleaned that the user just opened. */
+const expectations = new Map();
+/** first URL (no #) → failed navigation not (yet) matched with an expectation (the message can arrive late). */
+const failures = new Map();
+
+/** Drop expired entries (oldest first) and keep the map small. */
+function prune(map, ttl, max) {
+  const now = Date.now();
+  for (const [k, v] of map) {
+    if (map.size > max || now - v.time > ttl) map.delete(k);
+    else break;
+  }
+}
+
+function remember(map, key, value, ttl, max) {
+  map.delete(key); // re-insert at the end (newest)
+  map.set(key, Object.assign({ time: Date.now() }, value));
+  prune(map, ttl, max);
+}
+
+function take(map, key, ttl) {
+  const v = map.get(key);
+  if (!v) return null;
+  map.delete(key);
+  return Date.now() - v.time <= ttl ? v : null;
+}
+
+const EXPECT_TTL = 60000;
+const FAILURE_TTL = 10000;
 
 /** If `to` is `from` minus known tracking parameters, return the names removed. */
 function diffRedirect(from, to) {
@@ -271,7 +317,8 @@ async function recover(tabId, original, removed, reason, manual, fromRequestId =
   recentRecoveries.set(original, Date.now());
 
   const ruleId = nextTrialRuleId++;
-  const condition = { requestDomains: [host], tabIds: [tabId], resourceTypes: ['main_frame'] };
+  // The whole site (www. or not), like the permanent rule: sites often redirect between them.
+  const condition = { requestDomains: [S.siteKey(host)], tabIds: [tabId], resourceTypes: ['main_frame'] };
   try {
     await dnr.updateSessionRules({
       removeRuleIds: [ruleId],
@@ -281,9 +328,12 @@ async function recover(tabId, original, removed, reason, manual, fromRequestId =
     console.warn('[Clink] could not add bypass rule', e);
     return false;
   }
-  trials.set(tabId, { host, original, removed, ruleId, started: Date.now(), requestId: null, fromRequestId, manual: !!manual, reason });
-  setTimeout(() => endTrial(tabId, null), 30000);
-  await api.tabs.update(tabId, { url: original }).catch(() => endTrial(tabId, null));
+  const trial = { host, original, removed, ruleId, started: Date.now(), requestId: null, fromRequestId, manual: !!manual, reason };
+  trials.set(tabId, trial);
+  // Only ever end *this* trial: a later one in the same tab has its own timer.
+  const giveUp = () => trials.get(tabId) === trial && endTrial(tabId, null);
+  setTimeout(giveUp, 30000);
+  await api.tabs.update(tabId, { url: original }).catch(giveUp);
   return true;
 }
 
@@ -335,7 +385,10 @@ function track(requestId, tabId, url) {
     }
   }
   // Keep the original if this URL is just one of our own cleaning steps of it.
-  if (p.dirty !== url && !diffRedirect(p.dirty, url)) p.dirty = url;
+  if (p.dirty !== url && !diffRedirect(p.dirty, url)) {
+    p.dirty = url;
+    p.removed = null;
+  }
   p.seen.set(url, (p.seen.get(url) || 0) + 1);
   return p;
 }
@@ -350,6 +403,10 @@ if (HAS_WEBREQUEST) {
   const filter = { urls: ['<all_urls>'], types: ['main_frame'] };
 
   api.webRequest.onBeforeRequest.addListener((d) => {
+    if (d.tabId >= 0 && !firstUrls.has(d.requestId)) {
+      firstUrls.set(d.requestId, { url: d.url, time: Date.now() });
+      if (firstUrls.size > 200) prune(firstUrls, 120000, 200);
+    }
     const trial = trials.get(d.tabId);
     if (trial && !trial.requestId && d.url === trial.original && d.requestId !== trial.fromRequestId) {
       trial.requestId = d.requestId;
@@ -363,6 +420,10 @@ if (HAS_WEBREQUEST) {
   api.webRequest.onBeforeRedirect.addListener(async (d) => {
     const trial = trials.get(d.tabId);
     if (trial && trial.requestId === d.requestId) return;
+    // The cleaned URL was requested and the server sent us on (www → bare host,
+    // added slash, …): remember what was removed, in case the end of the chain fails.
+    const p0 = pending.get(d.requestId);
+    if (p0 && !p0.removed && d.url !== p0.dirty) p0.removed = diffRedirect(p0.dirty, d.url);
     const p = track(d.requestId, d.tabId, d.redirectUrl);
     // The server keeps sending us back to the URL we just cleaned → it's a loop.
     // Don't wait for the browser to give up after 20 hops; restore the link now.
@@ -377,6 +438,8 @@ if (HAS_WEBREQUEST) {
   }, filter);
 
   api.webRequest.onCompleted.addListener(async (d) => {
+    const first = firstUrls.get(d.requestId);
+    firstUrls.delete(d.requestId);
     const trial = trials.get(d.tabId);
     if (trial && trial.requestId === d.requestId) {
       pending.delete(d.requestId);
@@ -384,9 +447,12 @@ if (HAS_WEBREQUEST) {
       return;
     }
     const p = pending.get(d.requestId);
-    if (!p) return;
+    if (!p) {
+      onPageLinkCompleted(d, first ? first.url : d.url);
+      return;
+    }
     pending.delete(d.requestId);
-    const removed = diffRedirect(p.dirty, d.url);
+    const removed = diffRedirect(p.dirty, d.url) || p.removed;
     if (!removed) return; // Clink left it alone (paused, protected, …)
 
     await restoreTabs();
@@ -404,6 +470,7 @@ if (HAS_WEBREQUEST) {
   }, filter);
 
   api.webRequest.onErrorOccurred.addListener(async (d) => {
+    firstUrls.delete(d.requestId);
     const trial = trials.get(d.tabId);
     if (trial && trial.requestId === d.requestId) {
       pending.delete(d.requestId);
@@ -420,6 +487,35 @@ if (HAS_WEBREQUEST) {
       recover(p.tabId, p.dirty, w ? w.removed : [], 'redirect loop', false, d.requestId);
     }
   }, filter);
+}
+
+/**
+ * A navigation the network rules didn't touch finished. If it is a link the
+ * page layer cleaned (the content script told us when it was opened), give it
+ * the same Link Guard protection as a cleaned address.
+ */
+function onPageLinkCompleted(d, firstUrl) {
+  if (d.tabId < 0) return;
+  const nav = { tabId: d.tabId, url: d.url, status: d.statusCode, method: d.method, requestId: d.requestId };
+  const key = withoutHash(firstUrl);
+  const e = take(expectations, key, EXPECT_TTL) || take(expectations, withoutHash(d.url), EXPECT_TTL);
+  if (e) {
+    guardPageLink(e, nav);
+  } else if (d.method === 'GET' && shouldRecover(d.statusCode)) {
+    remember(failures, key, nav, FAILURE_TTL, 50);
+  }
+}
+
+async function guardPageLink(e, nav) {
+  await restoreTabs();
+  const t = tabState(nav.tabId);
+  t.nav = { original: e.original, cleaned: nav.url, removed: e.removed, time: Date.now() };
+  updateBadge(nav.tabId);
+  persistTabs();
+  const s = await getSettings();
+  if (s.linkGuard && nav.method === 'GET' && shouldRecover(nav.status)) {
+    recover(nav.tabId, e.original, e.removed, 'HTTP ' + nav.status, false, nav.requestId);
+  }
 }
 
 function safeHost(u) {
@@ -461,6 +557,28 @@ const handlers = {
     const unwrapped = Array.isArray(msg.unwrapped) ? msg.unwrapped.slice(0, 10) : [];
     bumpStats({ clicks: 1, params: removed.length, unwrapped: unwrapped.length });
     logRecent({ kind: 'link', host: String(msg.host || ''), removed, unwrapped });
+  },
+
+  /** The user opened a link the page layer cleaned (see onPageLinkCompleted). */
+  async 'clink:expect'(msg, sender) {
+    if (!HAS_WEBREQUEST || !sender.tab) return;
+    const str = (v) => (typeof v === 'string' && v.length <= 16384 ? v : '');
+    const cleaned = withoutHash(str(msg.cleaned));
+    const original = str(msg.original);
+    const removed = Array.isArray(msg.removed) ? msg.removed.filter((k) => typeof k === 'string').slice(0, 50) : [];
+    let a, b;
+    try {
+      a = new URL(cleaned);
+      b = new URL(original);
+    } catch (_) {
+      return;
+    }
+    // Only ever "restore" the same site, over the web.
+    if (!removed.length || a.origin !== b.origin || !/^https?:$/.test(a.protocol)) return;
+    const e = { original, removed };
+    const failed = take(failures, cleaned, FAILURE_TTL);
+    if (failed) guardPageLink(e, failed); // the navigation finished before this message arrived
+    else remember(expectations, cleaned, e, EXPECT_TTL, 100);
   },
 
   async 'clink:copied'(msg) {
