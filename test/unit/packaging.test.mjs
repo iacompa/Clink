@@ -39,6 +39,13 @@ test('Safari declares the host-access permission needed by redirect rules', asyn
   assert.ok(!safari.permissions.includes('webRequest'));
 });
 
+test('Firefox package supports desktop without opting into Android', async () => {
+  const firefox = await manifest('firefox');
+  assert.equal(firefox.browser_specific_settings.gecko.id, 'clink@iacompa.com');
+  assert.equal(firefox.browser_specific_settings.gecko.strict_min_version, '140.0');
+  assert.ok(!Object.hasOwn(firefox.browser_specific_settings, 'gecko_android'));
+});
+
 test('browser packages preserve identifiers, internal versions, and background behavior', async () => {
   for (const target of TARGETS) {
     const m = await manifest(target);
