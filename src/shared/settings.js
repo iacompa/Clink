@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 /* Clink settings: defaults, normalisation and storage helpers. */
 (function (root) {
   'use strict';

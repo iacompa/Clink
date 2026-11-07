@@ -1,0 +1,61 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Tests (Chromium + Firefox)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Install headless Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Unit tests
+        run: npm test
+      - name: Firefox add-on lint
+        run: npm run lint:firefox
+      - name: End-to-end tests in real Chromium and Firefox
+        run: |
+          firefox --version
+          npm run test:e2e
+      - name: Upload screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: screenshots
+          path: test/screenshots/
+          if-no-files-found: ignore
+
+  safari:
+    name: Safari build (macOS + iOS)
+    runs-on: macos-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Compile the Safari app
+        run: |
+          xcodebuild -version
+          npm run safari

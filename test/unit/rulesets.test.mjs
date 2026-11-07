@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 /*
  * Validates the generated declarativeNetRequest rulesets and runs them through
  * a small simulator of Chrome's matching semantics (highest priority wins, one

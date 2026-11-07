@@ -1,5 +1,8 @@
 # Clink — clean links
 
+[![CI](https://github.com/iacompa/Clink/actions/workflows/ci.yml/badge.svg)](https://github.com/iacompa/Clink/actions/workflows/ci.yml)
+[![License: GPL v3](https://img.shields.io/badge/license-GPL--3.0-blue.svg)](LICENSE)
+
 Clink is a browser extension for **Chrome, Firefox and Safari** (macOS and iOS). It strips
 tracking junk out of every link you open (`utm_source`, `fbclid`, `gclid`, `si`, `mc_eid`,
 Amazon's `ref=`/`pd_rd_*`, and hundreds more) and skips click-tracking redirect pages
@@ -174,6 +177,27 @@ URL (and, if it's risky, a must-not-change URL) to `test/unit/cleaner.test.mjs`.
   bypassed.
 - Firefox's own *Query Parameter Stripping* (in Strict tracking protection) works alongside
   Clink; Clink covers far more parameters and sites.
+
+## Contributing
+
+Bug reports and pull requests are welcome at
+[github.com/iacompa/Clink](https://github.com/iacompa/Clink/issues). For a link Clink broke
+or a tracker it missed, please include the full URL (with anything private removed).
+Before sending a change, run `npm test` and `npm run test:e2e`. Every new tracker or site
+rule needs a test URL. By contributing, you agree that your work is licensed under the
+same terms as Clink.
+
+## License
+
+Copyright (C) 2026 IA COMPA
+
+Clink is free software: you can redistribute it and/or modify it under the terms of the
+GNU General Public License as published by the Free Software Foundation, either version 3
+of the License, or (at your option) any later version.
+
+Clink is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+[GNU General Public License](LICENSE) for more details.
 
 ## References
 

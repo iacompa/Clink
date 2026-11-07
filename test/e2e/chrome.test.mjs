@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 /*
  * End-to-end test: loads dist/chrome into real Chromium and checks both
  * cleaning layers, the safety exceptions, Link Guard and the UI pages.

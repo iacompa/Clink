@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 /* Tiny HTTP server that plays every website in the end-to-end tests. */
 import http from 'node:http';
 import https from 'node:https';

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 (async () => {
   'use strict';
   const api = globalThis.browser || globalThis.chrome;

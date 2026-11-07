@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 /*
  * Clink page layer. Runs in every frame at document_start.
  *

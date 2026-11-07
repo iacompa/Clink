@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 /*
  * Clink background worker (Chrome service worker / Firefox & Safari event page).
  *

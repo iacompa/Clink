@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 /*
  * End-to-end test in real Firefox (the installed app), driven over WebDriver
  * BiDi — no extra dependencies. Skipped automatically if Firefox isn't installed.
@@ -9,7 +10,7 @@
  */
 import { test, before, after } from 'node:test';
 import assert from 'node:assert/strict';
-import { spawn } from 'node:child_process';
+import { spawn, execFileSync } from 'node:child_process';
 import fs from 'node:fs';
 import fsp from 'node:fs/promises';
 import os from 'node:os';
@@ -21,13 +22,23 @@ import { startServer } from './server.mjs';
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const EXT = path.join(ROOT, 'dist', 'firefox');
 const SHOTS = path.join(ROOT, 'test', 'screenshots');
-const FIREFOX = process.env.FIREFOX_BIN || '/Applications/Firefox.app/Contents/MacOS/firefox';
-const HAVE_FIREFOX = fs.existsSync(FIREFOX);
+const FIREFOX = process.env.FIREFOX_BIN || findFirefox();
+const HAVE_FIREFOX = !!FIREFOX && fs.existsSync(FIREFOX);
 const SKIP = !HAVE_FIREFOX && 'Firefox not installed';
 const UUID = 'c1a7c1a7-0000-4000-8000-c11c4c11c400';
 const EXT_ORIGIN = `moz-extension://${UUID}`;
 const HOSTS = ['shop.example.com', 'links.example.com', 'dest.example.com', 'www.google.com', 'guard.example.com',
   'loop.example.com', 'click.mailer.example.com', 'www.amazon.com', 'youtu.be', 'news.example.com', 'tracker.example.com'];
+
+/** The installed Firefox: the macOS app, or `firefox` on the PATH (Linux, CI). */
+function findFirefox() {
+  if (process.platform === 'darwin') return '/Applications/Firefox.app/Contents/MacOS/firefox';
+  try {
+    return execFileSync('which', ['firefox'], { encoding: 'utf8' }).trim();
+  } catch (_) {
+    return '';
+  }
+}
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 let server, P, SP, proc, ws, profile;

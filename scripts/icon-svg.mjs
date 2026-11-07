@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 /*
  * The Clink icon as SVG — one source for the extension icons (gen-icons.mjs)
  * and the Safari app icons (safari.mjs).

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 /*
  * Builds Clink for every browser:
  *   dist/chrome/   (MV3 service worker)       + dist/clink-chrome-<v>.zip
@@ -24,6 +25,7 @@ function manifest(target) {
     short_name: 'Clink',
     version: pkg.version,
     description: 'Removes tracking junk (utm, fbclid, gclid, si…) from every link you open and skips redirect trackers — without breaking links.',
+    homepage_url: 'https://github.com/iacompa/Clink',
     icons: { 16: 'icons/icon-16.png', 32: 'icons/icon-32.png', 48: 'icons/icon-48.png', 128: 'icons/icon-128.png' },
     action: {
       default_title: 'Clink',

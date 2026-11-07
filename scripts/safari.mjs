@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 /*
  * Packages Clink for Safari (macOS + iOS) as an Xcode project and compiles it.
  *

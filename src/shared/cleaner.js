@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 /*
  * Clink URL cleaner — pure functions shared by the content script, popup,
  * options page, background worker and the Node test-suite.

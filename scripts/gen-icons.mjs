@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 /* Renders the Clink extension icons (SVG → PNG) with headless Chromium. Run: node scripts/gen-icons.mjs */
 import fs from 'node:fs/promises';
 import path from 'node:path';

@@ -3,6 +3,14 @@
   "version": "1.0.0",
   "private": true,
   "description": "Clink — strips tracking junk from links in Chrome, Firefox and Safari.",
+  "homepage": "https://github.com/iacompa/Clink#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/iacompa/Clink.git"
+  },
+  "bugs": {
+    "url": "https://github.com/iacompa/Clink/issues"
+  },
   "type": "module",
   "scripts": {
     "build": "node scripts/build.mjs",
@@ -11,7 +19,7 @@
     "lint:firefox": "node scripts/build.mjs && web-ext lint --source-dir dist/firefox",
     "safari": "node scripts/build.mjs && node scripts/safari.mjs"
   },
-  "license": "MIT",
+  "license": "GPL-3.0-or-later",
   "devDependencies": {
     "playwright": "^1.65.0",
     "web-ext": "^10.8.0"
