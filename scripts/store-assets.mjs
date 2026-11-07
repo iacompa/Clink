@@ -155,15 +155,22 @@ function phoneScene({ title, screen, w, h, dark = false }) {
   </style></head><body><h1>${title}</h1><div class="screen">${screen}</div></body></html>`;
 }
 
-async function render(page, html, file, w, h, scale = 1) {
-  await page.setViewportSize({ width: w, height: h });
-  const cdp = await page.context().newCDPSession(page);
-  await cdp.send('Emulation.setDeviceMetricsOverride', { width: w, height: h, deviceScaleFactor: scale, mobile: false });
-  await page.setContent(html, { waitUntil: 'networkidle' });
-  await page.evaluate(() => document.fonts.ready);
-  await fs.mkdir(path.dirname(file), { recursive: true });
-  await page.screenshot({ path: file });
-  await cdp.detach();
+/**
+ * Render a scene at w×h CSS pixels and `scale` device pixels per CSS pixel. The scale must be
+ * set on the context: a CDP override is ignored by Playwright's screenshot, which then saves
+ * w×h images (the App Store rejects those for iPhone and iPad).
+ */
+async function render(browser, html, file, w, h, scale = 1) {
+  const ctx = await browser.newContext({ viewport: { width: w, height: h }, deviceScaleFactor: scale });
+  try {
+    const page = await ctx.newPage();
+    await page.setContent(html, { waitUntil: 'networkidle' });
+    await page.evaluate(() => document.fonts.ready);
+    await fs.mkdir(path.dirname(file), { recursive: true });
+    await page.screenshot({ path: file });
+  } finally {
+    await ctx.close();
+  }
 }
 
 async function main() {
@@ -224,11 +231,10 @@ async function main() {
   ];
 
   const browser = await chromium.launch();
-  const page = await browser.newPage();
   for (const [name, html] of desktop) {
-    await render(page, html, path.join(OUT, 'chrome', `${name}.png`), 1280, 800, 1);
+    await render(browser, html, path.join(OUT, 'chrome', `${name}.png`), 1280, 800, 1);
     await fs.copyFile(path.join(OUT, 'chrome', `${name}.png`), path.join(await mk(OUT, 'firefox'), `${name}.png`));
-    await render(page, html, path.join(OUT, 'apple', 'mac', `${name}.png`), 1280, 800, 2);
+    await render(browser, html, path.join(OUT, 'apple', 'mac', `${name}.png`), 1280, 800, 2);
     console.log('  desktop', name);
   }
 
@@ -238,8 +244,8 @@ async function main() {
     .t h1 { font-size: ${big ? 92 : 46}px; } .t p { font-size: ${big ? 30 : 17}px; color: var(--muted); margin-top: ${big ? 10 : 6}px; }
     .i svg { width: ${big ? 260 : 130}px; height: ${big ? 260 : 130}px; display: block; }
   </style></head><body><div class="i">${iconSvg({ size: 512, variant: 'mac' })}</div><div class="t"><h1>Clink</h1><p>Clean links.<br>Never broken ones.</p></div></body></html>`;
-  await render(page, tile(440, 280, false), path.join(OUT, 'chrome', 'promo-small-440x280.png'), 440, 280);
-  await render(page, tile(1400, 560, true), path.join(OUT, 'chrome', 'promo-marquee-1400x560.png'), 1400, 560);
+  await render(browser, tile(440, 280, false), path.join(OUT, 'chrome', 'promo-small-440x280.png'), 440, 280);
+  await render(browser, tile(1400, 560, true), path.join(OUT, 'chrome', 'promo-marquee-1400x560.png'), 1400, 560);
 
   // iPhone 6.9" (440×956 pt @3x) and iPad 13" (1032×1376 pt @2x)
   const popupFrame = (src, bg) => `<div style="height:100%;background:${bg};display:flex;justify-content:center;padding-top:24px"><img src="${src}" style="width:92%;align-self:flex-start;border-radius:14px"></div>`;
@@ -250,8 +256,8 @@ async function main() {
     ['3-private', 'Private by design.<br>Free and open source.', popupFrame(popupDark, '#1f1e1d'), true],
   ];
   for (const [name, title, screen, dark] of mobile) {
-    await render(page, phoneScene({ title, screen, w: 440, h: 956, dark }), path.join(OUT, 'apple', 'iphone', `${name}.png`), 440, 956, 3);
-    await render(page, phoneScene({ title, screen, w: 1032, h: 1376, dark }), path.join(OUT, 'apple', 'ipad', `${name}.png`), 1032, 1376, 2);
+    await render(browser, phoneScene({ title, screen, w: 440, h: 956, dark }), path.join(OUT, 'apple', 'iphone', `${name}.png`), 440, 956, 3);
+    await render(browser, phoneScene({ title, screen, w: 1032, h: 1376, dark }), path.join(OUT, 'apple', 'ipad', `${name}.png`), 1032, 1376, 2);
     console.log('  mobile', name);
   }
   await browser.close();
