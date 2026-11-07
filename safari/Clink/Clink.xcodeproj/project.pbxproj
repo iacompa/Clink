@@ -7,136 +7,136 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		9A4E8FD9309EF84A00961E65 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A4E8FD8309EF84A00961E65 /* AppDelegate.swift */; };
-		9A4E8FDB309EF84A00961E65 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A4E8FDA309EF84A00961E65 /* SceneDelegate.swift */; };
-		9A4E8FDE309EF84A00961E65 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9A4E8FDC309EF84A00961E65 /* LaunchScreen.storyboard */; };
-		9A4E8FE1309EF84A00961E65 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9A4E8FDF309EF84A00961E65 /* Main.storyboard */; };
-		9A4E8FEA309EF84A00961E65 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A4E8FE9309EF84A00961E65 /* AppDelegate.swift */; };
-		9A4E8FED309EF84A00961E65 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9A4E8FEB309EF84A00961E65 /* Main.storyboard */; };
-		9A4E8FF4309EF84A00961E65 /* Clink Extension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 9A4E8FF3309EF84A00961E65 /* Clink Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		9A4E8FFE309EF84A00961E65 /* Clink Extension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 9A4E8FFD309EF84A00961E65 /* Clink Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		9A4E9003309EF84A00961E65 /* Main.html in Resources */ = {isa = PBXBuildFile; fileRef = 9A4E8FC8309EF84A00961E65 /* Main.html */; };
-		9A4E9004309EF84A00961E65 /* Main.html in Resources */ = {isa = PBXBuildFile; fileRef = 9A4E8FC8309EF84A00961E65 /* Main.html */; };
-		9A4E9005309EF84A00961E65 /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 9A4E8FCA309EF84A00961E65 /* Icon.png */; };
-		9A4E9006309EF84A00961E65 /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 9A4E8FCA309EF84A00961E65 /* Icon.png */; };
-		9A4E9007309EF84A00961E65 /* Style.css in Resources */ = {isa = PBXBuildFile; fileRef = 9A4E8FCB309EF84A00961E65 /* Style.css */; };
-		9A4E9008309EF84A00961E65 /* Style.css in Resources */ = {isa = PBXBuildFile; fileRef = 9A4E8FCB309EF84A00961E65 /* Style.css */; };
-		9A4E9009309EF84A00961E65 /* Script.js in Resources */ = {isa = PBXBuildFile; fileRef = 9A4E8FCC309EF84A00961E65 /* Script.js */; };
-		9A4E900A309EF84A00961E65 /* Script.js in Resources */ = {isa = PBXBuildFile; fileRef = 9A4E8FCC309EF84A00961E65 /* Script.js */; };
-		9A4E900B309EF84A00961E65 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A4E8FCD309EF84A00961E65 /* ViewController.swift */; };
-		9A4E900C309EF84A00961E65 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A4E8FCD309EF84A00961E65 /* ViewController.swift */; };
-		9A4E900D309EF84A00961E65 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9A4E8FCE309EF84A00961E65 /* Assets.xcassets */; };
-		9A4E900E309EF84A00961E65 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9A4E8FCE309EF84A00961E65 /* Assets.xcassets */; };
-		9A4E900F309EF84A00961E65 /* SafariWebExtensionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A4E8FD0309EF84A00961E65 /* SafariWebExtensionHandler.swift */; };
-		9A4E9010309EF84A00961E65 /* SafariWebExtensionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A4E8FD0309EF84A00961E65 /* SafariWebExtensionHandler.swift */; };
-		9A4E902B309EF84B00961E65 /* ui in Resources */ = {isa = PBXBuildFile; fileRef = 9A4E9022309EF84B00961E65 /* ui */; };
-		9A4E902C309EF84B00961E65 /* options in Resources */ = {isa = PBXBuildFile; fileRef = 9A4E9023309EF84B00961E65 /* options */; };
-		9A4E902D309EF84B00961E65 /* popup in Resources */ = {isa = PBXBuildFile; fileRef = 9A4E9024309EF84B00961E65 /* popup */; };
-		9A4E902E309EF84B00961E65 /* background.js in Resources */ = {isa = PBXBuildFile; fileRef = 9A4E9025309EF84B00961E65 /* background.js */; };
-		9A4E902F309EF84B00961E65 /* shared in Resources */ = {isa = PBXBuildFile; fileRef = 9A4E9026309EF84B00961E65 /* shared */; };
-		9A4E9030309EF84B00961E65 /* icons in Resources */ = {isa = PBXBuildFile; fileRef = 9A4E9027309EF84B00961E65 /* icons */; };
-		9A4E9031309EF84B00961E65 /* manifest.json in Resources */ = {isa = PBXBuildFile; fileRef = 9A4E9028309EF84B00961E65 /* manifest.json */; };
-		9A4E9032309EF84B00961E65 /* rules in Resources */ = {isa = PBXBuildFile; fileRef = 9A4E9029309EF84B00961E65 /* rules */; };
-		9A4E9033309EF84B00961E65 /* content.js in Resources */ = {isa = PBXBuildFile; fileRef = 9A4E902A309EF84B00961E65 /* content.js */; };
-		9A4E9034309EF84B00961E65 /* ui in Resources */ = {isa = PBXBuildFile; fileRef = 9A4E9022309EF84B00961E65 /* ui */; };
-		9A4E9035309EF84B00961E65 /* options in Resources */ = {isa = PBXBuildFile; fileRef = 9A4E9023309EF84B00961E65 /* options */; };
-		9A4E9036309EF84B00961E65 /* popup in Resources */ = {isa = PBXBuildFile; fileRef = 9A4E9024309EF84B00961E65 /* popup */; };
-		9A4E9037309EF84B00961E65 /* background.js in Resources */ = {isa = PBXBuildFile; fileRef = 9A4E9025309EF84B00961E65 /* background.js */; };
-		9A4E9038309EF84B00961E65 /* shared in Resources */ = {isa = PBXBuildFile; fileRef = 9A4E9026309EF84B00961E65 /* shared */; };
-		9A4E9039309EF84B00961E65 /* icons in Resources */ = {isa = PBXBuildFile; fileRef = 9A4E9027309EF84B00961E65 /* icons */; };
-		9A4E903A309EF84B00961E65 /* manifest.json in Resources */ = {isa = PBXBuildFile; fileRef = 9A4E9028309EF84B00961E65 /* manifest.json */; };
-		9A4E903B309EF84B00961E65 /* rules in Resources */ = {isa = PBXBuildFile; fileRef = 9A4E9029309EF84B00961E65 /* rules */; };
-		9A4E903C309EF84B00961E65 /* content.js in Resources */ = {isa = PBXBuildFile; fileRef = 9A4E902A309EF84B00961E65 /* content.js */; };
+		9A102313309F6A5900DC6113 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A102312309F6A5900DC6113 /* AppDelegate.swift */; };
+		9A102315309F6A5900DC6113 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A102314309F6A5900DC6113 /* SceneDelegate.swift */; };
+		9A102318309F6A5900DC6113 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9A102316309F6A5900DC6113 /* LaunchScreen.storyboard */; };
+		9A10231B309F6A5900DC6113 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9A102319309F6A5900DC6113 /* Main.storyboard */; };
+		9A102324309F6A5900DC6113 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A102323309F6A5900DC6113 /* AppDelegate.swift */; };
+		9A102327309F6A5900DC6113 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9A102325309F6A5900DC6113 /* Main.storyboard */; };
+		9A10232E309F6A5900DC6113 /* Clink Extension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 9A10232D309F6A5900DC6113 /* Clink Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		9A102338309F6A5900DC6113 /* Clink Extension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 9A102337309F6A5900DC6113 /* Clink Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		9A10233D309F6A5900DC6113 /* Main.html in Resources */ = {isa = PBXBuildFile; fileRef = 9A102302309F6A5800DC6113 /* Main.html */; };
+		9A10233E309F6A5900DC6113 /* Main.html in Resources */ = {isa = PBXBuildFile; fileRef = 9A102302309F6A5800DC6113 /* Main.html */; };
+		9A10233F309F6A5900DC6113 /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 9A102304309F6A5800DC6113 /* Icon.png */; };
+		9A102340309F6A5900DC6113 /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 9A102304309F6A5800DC6113 /* Icon.png */; };
+		9A102341309F6A5900DC6113 /* Style.css in Resources */ = {isa = PBXBuildFile; fileRef = 9A102305309F6A5800DC6113 /* Style.css */; };
+		9A102342309F6A5900DC6113 /* Style.css in Resources */ = {isa = PBXBuildFile; fileRef = 9A102305309F6A5800DC6113 /* Style.css */; };
+		9A102343309F6A5900DC6113 /* Script.js in Resources */ = {isa = PBXBuildFile; fileRef = 9A102306309F6A5800DC6113 /* Script.js */; };
+		9A102344309F6A5900DC6113 /* Script.js in Resources */ = {isa = PBXBuildFile; fileRef = 9A102306309F6A5800DC6113 /* Script.js */; };
+		9A102345309F6A5900DC6113 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A102307309F6A5800DC6113 /* ViewController.swift */; };
+		9A102346309F6A5900DC6113 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A102307309F6A5800DC6113 /* ViewController.swift */; };
+		9A102347309F6A5900DC6113 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9A102308309F6A5900DC6113 /* Assets.xcassets */; };
+		9A102348309F6A5900DC6113 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9A102308309F6A5900DC6113 /* Assets.xcassets */; };
+		9A102349309F6A5900DC6113 /* SafariWebExtensionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A10230A309F6A5900DC6113 /* SafariWebExtensionHandler.swift */; };
+		9A10234A309F6A5900DC6113 /* SafariWebExtensionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A10230A309F6A5900DC6113 /* SafariWebExtensionHandler.swift */; };
+		9A102365309F6A5900DC6113 /* ui in Resources */ = {isa = PBXBuildFile; fileRef = 9A10235C309F6A5900DC6113 /* ui */; };
+		9A102366309F6A5900DC6113 /* options in Resources */ = {isa = PBXBuildFile; fileRef = 9A10235D309F6A5900DC6113 /* options */; };
+		9A102367309F6A5900DC6113 /* popup in Resources */ = {isa = PBXBuildFile; fileRef = 9A10235E309F6A5900DC6113 /* popup */; };
+		9A102368309F6A5900DC6113 /* background.js in Resources */ = {isa = PBXBuildFile; fileRef = 9A10235F309F6A5900DC6113 /* background.js */; };
+		9A102369309F6A5900DC6113 /* shared in Resources */ = {isa = PBXBuildFile; fileRef = 9A102360309F6A5900DC6113 /* shared */; };
+		9A10236A309F6A5900DC6113 /* icons in Resources */ = {isa = PBXBuildFile; fileRef = 9A102361309F6A5900DC6113 /* icons */; };
+		9A10236B309F6A5900DC6113 /* manifest.json in Resources */ = {isa = PBXBuildFile; fileRef = 9A102362309F6A5900DC6113 /* manifest.json */; };
+		9A10236C309F6A5900DC6113 /* rules in Resources */ = {isa = PBXBuildFile; fileRef = 9A102363309F6A5900DC6113 /* rules */; };
+		9A10236D309F6A5900DC6113 /* content.js in Resources */ = {isa = PBXBuildFile; fileRef = 9A102364309F6A5900DC6113 /* content.js */; };
+		9A10236E309F6A5900DC6113 /* ui in Resources */ = {isa = PBXBuildFile; fileRef = 9A10235C309F6A5900DC6113 /* ui */; };
+		9A10236F309F6A5900DC6113 /* options in Resources */ = {isa = PBXBuildFile; fileRef = 9A10235D309F6A5900DC6113 /* options */; };
+		9A102370309F6A5900DC6113 /* popup in Resources */ = {isa = PBXBuildFile; fileRef = 9A10235E309F6A5900DC6113 /* popup */; };
+		9A102371309F6A5900DC6113 /* background.js in Resources */ = {isa = PBXBuildFile; fileRef = 9A10235F309F6A5900DC6113 /* background.js */; };
+		9A102372309F6A5900DC6113 /* shared in Resources */ = {isa = PBXBuildFile; fileRef = 9A102360309F6A5900DC6113 /* shared */; };
+		9A102373309F6A5900DC6113 /* icons in Resources */ = {isa = PBXBuildFile; fileRef = 9A102361309F6A5900DC6113 /* icons */; };
+		9A102374309F6A5900DC6113 /* manifest.json in Resources */ = {isa = PBXBuildFile; fileRef = 9A102362309F6A5900DC6113 /* manifest.json */; };
+		9A102375309F6A5900DC6113 /* rules in Resources */ = {isa = PBXBuildFile; fileRef = 9A102363309F6A5900DC6113 /* rules */; };
+		9A102376309F6A5900DC6113 /* content.js in Resources */ = {isa = PBXBuildFile; fileRef = 9A102364309F6A5900DC6113 /* content.js */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		9A4E8FF5309EF84A00961E65 /* PBXContainerItemProxy */ = {
+		9A10232F309F6A5900DC6113 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 9A4E8FC2309EF84900961E65 /* Project object */;
+			containerPortal = 9A1022FC309F6A5800DC6113 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 9A4E8FF2309EF84A00961E65;
+			remoteGlobalIDString = 9A10232C309F6A5900DC6113;
 			remoteInfo = "Clink Extension (iOS)";
 		};
-		9A4E8FFF309EF84A00961E65 /* PBXContainerItemProxy */ = {
+		9A102339309F6A5900DC6113 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 9A4E8FC2309EF84900961E65 /* Project object */;
+			containerPortal = 9A1022FC309F6A5800DC6113 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 9A4E8FFC309EF84A00961E65;
+			remoteGlobalIDString = 9A102336309F6A5900DC6113;
 			remoteInfo = "Clink Extension (macOS)";
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		9A4E9016309EF84A00961E65 /* Embed Foundation Extensions */ = {
+		9A102350309F6A5900DC6113 /* Embed Foundation Extensions */ = {
 			isa = PBXCopyFilesBuildPhase;
 			dstPath = "";
 			dstSubfolder = PlugIns;
 			files = (
-				9A4E8FF4309EF84A00961E65 /* Clink Extension.appex in Embed Foundation Extensions */,
+				9A10232E309F6A5900DC6113 /* Clink Extension.appex in Embed Foundation Extensions */,
 			);
 			name = "Embed Foundation Extensions";
 		};
-		9A4E901D309EF84A00961E65 /* Embed Foundation Extensions */ = {
+		9A102357309F6A5900DC6113 /* Embed Foundation Extensions */ = {
 			isa = PBXCopyFilesBuildPhase;
 			dstPath = "";
 			dstSubfolder = PlugIns;
 			files = (
-				9A4E8FFE309EF84A00961E65 /* Clink Extension.appex in Embed Foundation Extensions */,
+				9A102338309F6A5900DC6113 /* Clink Extension.appex in Embed Foundation Extensions */,
 			);
 			name = "Embed Foundation Extensions";
 		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		9A4E8FC9309EF84A00961E65 /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = Base; path = Base.lproj/Main.html; sourceTree = "<group>"; };
-		9A4E8FCA309EF84A00961E65 /* Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Icon.png; sourceTree = "<group>"; };
-		9A4E8FCB309EF84A00961E65 /* Style.css */ = {isa = PBXFileReference; lastKnownFileType = text.css; path = Style.css; sourceTree = "<group>"; };
-		9A4E8FCC309EF84A00961E65 /* Script.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = Script.js; sourceTree = "<group>"; };
-		9A4E8FCD309EF84A00961E65 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
-		9A4E8FCE309EF84A00961E65 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		9A4E8FD0309EF84A00961E65 /* SafariWebExtensionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafariWebExtensionHandler.swift; sourceTree = "<group>"; };
-		9A4E8FD5309EF84A00961E65 /* Clink.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Clink.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		9A4E8FD8309EF84A00961E65 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		9A4E8FDA309EF84A00961E65 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		9A4E8FDD309EF84A00961E65 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
-		9A4E8FE0309EF84A00961E65 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
-		9A4E8FE2309EF84A00961E65 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		9A4E8FE7309EF84A00961E65 /* Clink.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Clink.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		9A4E8FE9309EF84A00961E65 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		9A4E8FEC309EF84A00961E65 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
-		9A4E8FEE309EF84A00961E65 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		9A4E8FF3309EF84A00961E65 /* Clink Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Clink Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
-		9A4E8FF8309EF84A00961E65 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		9A4E8FFD309EF84A00961E65 /* Clink Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Clink Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
-		9A4E9002309EF84A00961E65 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		9A4E9022309EF84B00961E65 /* ui */ = {isa = PBXFileReference; lastKnownFileType = folder; name = ui; path = Resources/ui; sourceTree = "<group>"; };
-		9A4E9023309EF84B00961E65 /* options */ = {isa = PBXFileReference; lastKnownFileType = folder; name = options; path = Resources/options; sourceTree = "<group>"; };
-		9A4E9024309EF84B00961E65 /* popup */ = {isa = PBXFileReference; lastKnownFileType = folder; name = popup; path = Resources/popup; sourceTree = "<group>"; };
-		9A4E9025309EF84B00961E65 /* background.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = background.js; path = Resources/background.js; sourceTree = "<group>"; };
-		9A4E9026309EF84B00961E65 /* shared */ = {isa = PBXFileReference; lastKnownFileType = folder; name = shared; path = Resources/shared; sourceTree = "<group>"; };
-		9A4E9027309EF84B00961E65 /* icons */ = {isa = PBXFileReference; lastKnownFileType = folder; name = icons; path = Resources/icons; sourceTree = "<group>"; };
-		9A4E9028309EF84B00961E65 /* manifest.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; name = manifest.json; path = Resources/manifest.json; sourceTree = "<group>"; };
-		9A4E9029309EF84B00961E65 /* rules */ = {isa = PBXFileReference; lastKnownFileType = folder; name = rules; path = Resources/rules; sourceTree = "<group>"; };
-		9A4E902A309EF84B00961E65 /* content.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = content.js; path = Resources/content.js; sourceTree = "<group>"; };
+		9A102303309F6A5800DC6113 /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = Base; path = Base.lproj/Main.html; sourceTree = "<group>"; };
+		9A102304309F6A5800DC6113 /* Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Icon.png; sourceTree = "<group>"; };
+		9A102305309F6A5800DC6113 /* Style.css */ = {isa = PBXFileReference; lastKnownFileType = text.css; path = Style.css; sourceTree = "<group>"; };
+		9A102306309F6A5800DC6113 /* Script.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = Script.js; sourceTree = "<group>"; };
+		9A102307309F6A5800DC6113 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		9A102308309F6A5900DC6113 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		9A10230A309F6A5900DC6113 /* SafariWebExtensionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafariWebExtensionHandler.swift; sourceTree = "<group>"; };
+		9A10230F309F6A5900DC6113 /* Clink.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Clink.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		9A102312309F6A5900DC6113 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		9A102314309F6A5900DC6113 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
+		9A102317309F6A5900DC6113 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		9A10231A309F6A5900DC6113 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		9A10231C309F6A5900DC6113 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		9A102321309F6A5900DC6113 /* Clink.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Clink.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		9A102323309F6A5900DC6113 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		9A102326309F6A5900DC6113 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		9A102328309F6A5900DC6113 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		9A10232D309F6A5900DC6113 /* Clink Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Clink Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
+		9A102332309F6A5900DC6113 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		9A102337309F6A5900DC6113 /* Clink Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Clink Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
+		9A10233C309F6A5900DC6113 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		9A10235C309F6A5900DC6113 /* ui */ = {isa = PBXFileReference; lastKnownFileType = folder; name = ui; path = Resources/ui; sourceTree = "<group>"; };
+		9A10235D309F6A5900DC6113 /* options */ = {isa = PBXFileReference; lastKnownFileType = folder; name = options; path = Resources/options; sourceTree = "<group>"; };
+		9A10235E309F6A5900DC6113 /* popup */ = {isa = PBXFileReference; lastKnownFileType = folder; name = popup; path = Resources/popup; sourceTree = "<group>"; };
+		9A10235F309F6A5900DC6113 /* background.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = background.js; path = Resources/background.js; sourceTree = "<group>"; };
+		9A102360309F6A5900DC6113 /* shared */ = {isa = PBXFileReference; lastKnownFileType = folder; name = shared; path = Resources/shared; sourceTree = "<group>"; };
+		9A102361309F6A5900DC6113 /* icons */ = {isa = PBXFileReference; lastKnownFileType = folder; name = icons; path = Resources/icons; sourceTree = "<group>"; };
+		9A102362309F6A5900DC6113 /* manifest.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; name = manifest.json; path = Resources/manifest.json; sourceTree = "<group>"; };
+		9A102363309F6A5900DC6113 /* rules */ = {isa = PBXFileReference; lastKnownFileType = folder; name = rules; path = Resources/rules; sourceTree = "<group>"; };
+		9A102364309F6A5900DC6113 /* content.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = content.js; path = Resources/content.js; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		9A4E8FD2309EF84A00961E65 /* Frameworks */ = {
+		9A10230C309F6A5900DC6113 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			files = (
 			);
 		};
-		9A4E8FE4309EF84A00961E65 /* Frameworks */ = {
+		9A10231E309F6A5900DC6113 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			files = (
 			);
 		};
-		9A4E8FF0309EF84A00961E65 /* Frameworks */ = {
+		9A10232A309F6A5900DC6113 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			files = (
 			);
 		};
-		9A4E8FFA309EF84A00961E65 /* Frameworks */ = {
+		9A102334309F6A5900DC6113 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			files = (
 			);
@@ -144,110 +144,110 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		9A4E8FC1309EF84900961E65 = {
+		9A1022FB309F6A5800DC6113 = {
 			isa = PBXGroup;
 			children = (
-				9A4E8FC6309EF84900961E65 /* Shared (App) */,
-				9A4E8FCF309EF84A00961E65 /* Shared (Extension) */,
-				9A4E8FD7309EF84A00961E65 /* iOS (App) */,
-				9A4E8FE8309EF84A00961E65 /* macOS (App) */,
-				9A4E8FF7309EF84A00961E65 /* iOS (Extension) */,
-				9A4E9001309EF84A00961E65 /* macOS (Extension) */,
-				9A4E8FD6309EF84A00961E65 /* Products */,
+				9A102300309F6A5800DC6113 /* Shared (App) */,
+				9A102309309F6A5900DC6113 /* Shared (Extension) */,
+				9A102311309F6A5900DC6113 /* iOS (App) */,
+				9A102322309F6A5900DC6113 /* macOS (App) */,
+				9A102331309F6A5900DC6113 /* iOS (Extension) */,
+				9A10233B309F6A5900DC6113 /* macOS (Extension) */,
+				9A102310309F6A5900DC6113 /* Products */,
 			);
 			sourceTree = "<group>";
 		};
-		9A4E8FC6309EF84900961E65 /* Shared (App) */ = {
+		9A102300309F6A5800DC6113 /* Shared (App) */ = {
 			isa = PBXGroup;
 			children = (
-				9A4E8FCD309EF84A00961E65 /* ViewController.swift */,
-				9A4E8FCE309EF84A00961E65 /* Assets.xcassets */,
-				9A4E8FC7309EF84900961E65 /* Resources */,
+				9A102307309F6A5800DC6113 /* ViewController.swift */,
+				9A102308309F6A5900DC6113 /* Assets.xcassets */,
+				9A102301309F6A5800DC6113 /* Resources */,
 			);
 			path = "Shared (App)";
 			sourceTree = "<group>";
 		};
-		9A4E8FC7309EF84900961E65 /* Resources */ = {
+		9A102301309F6A5800DC6113 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				9A4E8FC8309EF84A00961E65 /* Main.html */,
-				9A4E8FCA309EF84A00961E65 /* Icon.png */,
-				9A4E8FCB309EF84A00961E65 /* Style.css */,
-				9A4E8FCC309EF84A00961E65 /* Script.js */,
+				9A102302309F6A5800DC6113 /* Main.html */,
+				9A102304309F6A5800DC6113 /* Icon.png */,
+				9A102305309F6A5800DC6113 /* Style.css */,
+				9A102306309F6A5800DC6113 /* Script.js */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
 		};
-		9A4E8FCF309EF84A00961E65 /* Shared (Extension) */ = {
+		9A102309309F6A5900DC6113 /* Shared (Extension) */ = {
 			isa = PBXGroup;
 			children = (
-				9A4E9021309EF84B00961E65 /* Resources */,
-				9A4E8FD0309EF84A00961E65 /* SafariWebExtensionHandler.swift */,
+				9A10235B309F6A5900DC6113 /* Resources */,
+				9A10230A309F6A5900DC6113 /* SafariWebExtensionHandler.swift */,
 			);
 			path = "Shared (Extension)";
 			sourceTree = "<group>";
 		};
-		9A4E8FD6309EF84A00961E65 /* Products */ = {
+		9A102310309F6A5900DC6113 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				9A4E8FD5309EF84A00961E65 /* Clink.app */,
-				9A4E8FE7309EF84A00961E65 /* Clink.app */,
-				9A4E8FF3309EF84A00961E65 /* Clink Extension.appex */,
-				9A4E8FFD309EF84A00961E65 /* Clink Extension.appex */,
+				9A10230F309F6A5900DC6113 /* Clink.app */,
+				9A102321309F6A5900DC6113 /* Clink.app */,
+				9A10232D309F6A5900DC6113 /* Clink Extension.appex */,
+				9A102337309F6A5900DC6113 /* Clink Extension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		9A4E8FD7309EF84A00961E65 /* iOS (App) */ = {
+		9A102311309F6A5900DC6113 /* iOS (App) */ = {
 			isa = PBXGroup;
 			children = (
-				9A4E8FD8309EF84A00961E65 /* AppDelegate.swift */,
-				9A4E8FDA309EF84A00961E65 /* SceneDelegate.swift */,
-				9A4E8FDC309EF84A00961E65 /* LaunchScreen.storyboard */,
-				9A4E8FDF309EF84A00961E65 /* Main.storyboard */,
-				9A4E8FE2309EF84A00961E65 /* Info.plist */,
+				9A102312309F6A5900DC6113 /* AppDelegate.swift */,
+				9A102314309F6A5900DC6113 /* SceneDelegate.swift */,
+				9A102316309F6A5900DC6113 /* LaunchScreen.storyboard */,
+				9A102319309F6A5900DC6113 /* Main.storyboard */,
+				9A10231C309F6A5900DC6113 /* Info.plist */,
 			);
 			path = "iOS (App)";
 			sourceTree = "<group>";
 		};
-		9A4E8FE8309EF84A00961E65 /* macOS (App) */ = {
+		9A102322309F6A5900DC6113 /* macOS (App) */ = {
 			isa = PBXGroup;
 			children = (
-				9A4E8FE9309EF84A00961E65 /* AppDelegate.swift */,
-				9A4E8FEB309EF84A00961E65 /* Main.storyboard */,
-				9A4E8FEE309EF84A00961E65 /* Info.plist */,
+				9A102323309F6A5900DC6113 /* AppDelegate.swift */,
+				9A102325309F6A5900DC6113 /* Main.storyboard */,
+				9A102328309F6A5900DC6113 /* Info.plist */,
 			);
 			path = "macOS (App)";
 			sourceTree = "<group>";
 		};
-		9A4E8FF7309EF84A00961E65 /* iOS (Extension) */ = {
+		9A102331309F6A5900DC6113 /* iOS (Extension) */ = {
 			isa = PBXGroup;
 			children = (
-				9A4E8FF8309EF84A00961E65 /* Info.plist */,
+				9A102332309F6A5900DC6113 /* Info.plist */,
 			);
 			path = "iOS (Extension)";
 			sourceTree = "<group>";
 		};
-		9A4E9001309EF84A00961E65 /* macOS (Extension) */ = {
+		9A10233B309F6A5900DC6113 /* macOS (Extension) */ = {
 			isa = PBXGroup;
 			children = (
-				9A4E9002309EF84A00961E65 /* Info.plist */,
+				9A10233C309F6A5900DC6113 /* Info.plist */,
 			);
 			path = "macOS (Extension)";
 			sourceTree = "<group>";
 		};
-		9A4E9021309EF84B00961E65 /* Resources */ = {
+		9A10235B309F6A5900DC6113 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				9A4E9022309EF84B00961E65 /* ui */,
-				9A4E9023309EF84B00961E65 /* options */,
-				9A4E9024309EF84B00961E65 /* popup */,
-				9A4E9025309EF84B00961E65 /* background.js */,
-				9A4E9026309EF84B00961E65 /* shared */,
-				9A4E9027309EF84B00961E65 /* icons */,
-				9A4E9028309EF84B00961E65 /* manifest.json */,
-				9A4E9029309EF84B00961E65 /* rules */,
-				9A4E902A309EF84B00961E65 /* content.js */,
+				9A10235C309F6A5900DC6113 /* ui */,
+				9A10235D309F6A5900DC6113 /* options */,
+				9A10235E309F6A5900DC6113 /* popup */,
+				9A10235F309F6A5900DC6113 /* background.js */,
+				9A102360309F6A5900DC6113 /* shared */,
+				9A102361309F6A5900DC6113 /* icons */,
+				9A102362309F6A5900DC6113 /* manifest.json */,
+				9A102363309F6A5900DC6113 /* rules */,
+				9A102364309F6A5900DC6113 /* content.js */,
 			);
 			name = Resources;
 			path = "Shared (Extension)";
@@ -256,246 +256,246 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		9A4E8FD4309EF84A00961E65 /* Clink (iOS) */ = {
+		9A10230E309F6A5900DC6113 /* Clink (iOS) */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 9A4E9017309EF84A00961E65 /* Build configuration list for PBXNativeTarget "Clink (iOS)" */;
+			buildConfigurationList = 9A102351309F6A5900DC6113 /* Build configuration list for PBXNativeTarget "Clink (iOS)" */;
 			buildPhases = (
-				9A4E8FD1309EF84A00961E65 /* Sources */,
-				9A4E8FD2309EF84A00961E65 /* Frameworks */,
-				9A4E8FD3309EF84A00961E65 /* Resources */,
-				9A4E9016309EF84A00961E65 /* Embed Foundation Extensions */,
+				9A10230B309F6A5900DC6113 /* Sources */,
+				9A10230C309F6A5900DC6113 /* Frameworks */,
+				9A10230D309F6A5900DC6113 /* Resources */,
+				9A102350309F6A5900DC6113 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				9A4E8FF6309EF84A00961E65 /* PBXTargetDependency */,
+				9A102330309F6A5900DC6113 /* PBXTargetDependency */,
 			);
 			name = "Clink (iOS)";
 			productName = "Clink (iOS)";
-			productReference = 9A4E8FD5309EF84A00961E65 /* Clink.app */;
+			productReference = 9A10230F309F6A5900DC6113 /* Clink.app */;
 			productType = "com.apple.product-type.application";
 		};
-		9A4E8FE6309EF84A00961E65 /* Clink (macOS) */ = {
+		9A102320309F6A5900DC6113 /* Clink (macOS) */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 9A4E901E309EF84A00961E65 /* Build configuration list for PBXNativeTarget "Clink (macOS)" */;
+			buildConfigurationList = 9A102358309F6A5900DC6113 /* Build configuration list for PBXNativeTarget "Clink (macOS)" */;
 			buildPhases = (
-				9A4E8FE3309EF84A00961E65 /* Sources */,
-				9A4E8FE4309EF84A00961E65 /* Frameworks */,
-				9A4E8FE5309EF84A00961E65 /* Resources */,
-				9A4E901D309EF84A00961E65 /* Embed Foundation Extensions */,
+				9A10231D309F6A5900DC6113 /* Sources */,
+				9A10231E309F6A5900DC6113 /* Frameworks */,
+				9A10231F309F6A5900DC6113 /* Resources */,
+				9A102357309F6A5900DC6113 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				9A4E9000309EF84A00961E65 /* PBXTargetDependency */,
+				9A10233A309F6A5900DC6113 /* PBXTargetDependency */,
 			);
 			name = "Clink (macOS)";
 			productName = "Clink (macOS)";
-			productReference = 9A4E8FE7309EF84A00961E65 /* Clink.app */;
+			productReference = 9A102321309F6A5900DC6113 /* Clink.app */;
 			productType = "com.apple.product-type.application";
 		};
-		9A4E8FF2309EF84A00961E65 /* Clink Extension (iOS) */ = {
+		9A10232C309F6A5900DC6113 /* Clink Extension (iOS) */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 9A4E9013309EF84A00961E65 /* Build configuration list for PBXNativeTarget "Clink Extension (iOS)" */;
+			buildConfigurationList = 9A10234D309F6A5900DC6113 /* Build configuration list for PBXNativeTarget "Clink Extension (iOS)" */;
 			buildPhases = (
-				9A4E8FEF309EF84A00961E65 /* Sources */,
-				9A4E8FF0309EF84A00961E65 /* Frameworks */,
-				9A4E8FF1309EF84A00961E65 /* Resources */,
+				9A102329309F6A5900DC6113 /* Sources */,
+				9A10232A309F6A5900DC6113 /* Frameworks */,
+				9A10232B309F6A5900DC6113 /* Resources */,
 			);
 			buildRules = (
 			);
 			name = "Clink Extension (iOS)";
 			productName = "Clink Extension (iOS)";
-			productReference = 9A4E8FF3309EF84A00961E65 /* Clink Extension.appex */;
+			productReference = 9A10232D309F6A5900DC6113 /* Clink Extension.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
-		9A4E8FFC309EF84A00961E65 /* Clink Extension (macOS) */ = {
+		9A102336309F6A5900DC6113 /* Clink Extension (macOS) */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 9A4E901A309EF84A00961E65 /* Build configuration list for PBXNativeTarget "Clink Extension (macOS)" */;
+			buildConfigurationList = 9A102354309F6A5900DC6113 /* Build configuration list for PBXNativeTarget "Clink Extension (macOS)" */;
 			buildPhases = (
-				9A4E8FF9309EF84A00961E65 /* Sources */,
-				9A4E8FFA309EF84A00961E65 /* Frameworks */,
-				9A4E8FFB309EF84A00961E65 /* Resources */,
+				9A102333309F6A5900DC6113 /* Sources */,
+				9A102334309F6A5900DC6113 /* Frameworks */,
+				9A102335309F6A5900DC6113 /* Resources */,
 			);
 			buildRules = (
 			);
 			name = "Clink Extension (macOS)";
 			productName = "Clink Extension (macOS)";
-			productReference = 9A4E8FFD309EF84A00961E65 /* Clink Extension.appex */;
+			productReference = 9A102337309F6A5900DC6113 /* Clink Extension.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		9A4E8FC2309EF84900961E65 /* Project object */ = {
+		9A1022FC309F6A5800DC6113 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 2710;
 				LastUpgradeCheck = 2710;
 				TargetAttributes = {
-					9A4E8FD4309EF84A00961E65 = {
+					9A10230E309F6A5900DC6113 = {
 						CreatedOnToolsVersion = 27.1;
 					};
-					9A4E8FE6309EF84A00961E65 = {
+					9A102320309F6A5900DC6113 = {
 						CreatedOnToolsVersion = 27.1;
 					};
-					9A4E8FF2309EF84A00961E65 = {
+					9A10232C309F6A5900DC6113 = {
 						CreatedOnToolsVersion = 27.1;
 					};
-					9A4E8FFC309EF84A00961E65 = {
+					9A102336309F6A5900DC6113 = {
 						CreatedOnToolsVersion = 27.1;
 					};
 				};
 			};
-			buildConfigurationList = 9A4E8FC5309EF84900961E65 /* Build configuration list for PBXProject "Clink" */;
+			buildConfigurationList = 9A1022FF309F6A5800DC6113 /* Build configuration list for PBXProject "Clink" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
 				Base,
 			);
-			mainGroup = 9A4E8FC1309EF84900961E65;
+			mainGroup = 9A1022FB309F6A5800DC6113;
 			minimizedProjectReferenceProxies = 1;
 			preferredProjectObjectVersion = 77;
-			productRefGroup = 9A4E8FD6309EF84A00961E65 /* Products */;
+			productRefGroup = 9A102310309F6A5900DC6113 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				9A4E8FD4309EF84A00961E65 /* Clink (iOS) */,
-				9A4E8FE6309EF84A00961E65 /* Clink (macOS) */,
-				9A4E8FF2309EF84A00961E65 /* Clink Extension (iOS) */,
-				9A4E8FFC309EF84A00961E65 /* Clink Extension (macOS) */,
+				9A10230E309F6A5900DC6113 /* Clink (iOS) */,
+				9A102320309F6A5900DC6113 /* Clink (macOS) */,
+				9A10232C309F6A5900DC6113 /* Clink Extension (iOS) */,
+				9A102336309F6A5900DC6113 /* Clink Extension (macOS) */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		9A4E8FD3309EF84A00961E65 /* Resources */ = {
+		9A10230D309F6A5900DC6113 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			files = (
-				9A4E9005309EF84A00961E65 /* Icon.png in Resources */,
-				9A4E8FDE309EF84A00961E65 /* LaunchScreen.storyboard in Resources */,
-				9A4E9003309EF84A00961E65 /* Main.html in Resources */,
-				9A4E9009309EF84A00961E65 /* Script.js in Resources */,
-				9A4E900D309EF84A00961E65 /* Assets.xcassets in Resources */,
-				9A4E8FE1309EF84A00961E65 /* Main.storyboard in Resources */,
-				9A4E9007309EF84A00961E65 /* Style.css in Resources */,
+				9A10233F309F6A5900DC6113 /* Icon.png in Resources */,
+				9A102318309F6A5900DC6113 /* LaunchScreen.storyboard in Resources */,
+				9A10233D309F6A5900DC6113 /* Main.html in Resources */,
+				9A102343309F6A5900DC6113 /* Script.js in Resources */,
+				9A102347309F6A5900DC6113 /* Assets.xcassets in Resources */,
+				9A10231B309F6A5900DC6113 /* Main.storyboard in Resources */,
+				9A102341309F6A5900DC6113 /* Style.css in Resources */,
 			);
 		};
-		9A4E8FE5309EF84A00961E65 /* Resources */ = {
+		9A10231F309F6A5900DC6113 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			files = (
-				9A4E9006309EF84A00961E65 /* Icon.png in Resources */,
-				9A4E9008309EF84A00961E65 /* Style.css in Resources */,
-				9A4E8FED309EF84A00961E65 /* Main.storyboard in Resources */,
-				9A4E900A309EF84A00961E65 /* Script.js in Resources */,
-				9A4E900E309EF84A00961E65 /* Assets.xcassets in Resources */,
-				9A4E9004309EF84A00961E65 /* Main.html in Resources */,
+				9A102340309F6A5900DC6113 /* Icon.png in Resources */,
+				9A102342309F6A5900DC6113 /* Style.css in Resources */,
+				9A102327309F6A5900DC6113 /* Main.storyboard in Resources */,
+				9A102344309F6A5900DC6113 /* Script.js in Resources */,
+				9A102348309F6A5900DC6113 /* Assets.xcassets in Resources */,
+				9A10233E309F6A5900DC6113 /* Main.html in Resources */,
 			);
 		};
-		9A4E8FF1309EF84A00961E65 /* Resources */ = {
+		9A10232B309F6A5900DC6113 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			files = (
-				9A4E903B309EF84B00961E65 /* rules in Resources */,
-				9A4E9038309EF84B00961E65 /* shared in Resources */,
-				9A4E903A309EF84B00961E65 /* manifest.json in Resources */,
-				9A4E9037309EF84B00961E65 /* background.js in Resources */,
-				9A4E9036309EF84B00961E65 /* popup in Resources */,
-				9A4E9039309EF84B00961E65 /* icons in Resources */,
-				9A4E903C309EF84B00961E65 /* content.js in Resources */,
-				9A4E9034309EF84B00961E65 /* ui in Resources */,
-				9A4E9035309EF84B00961E65 /* options in Resources */,
+				9A102375309F6A5900DC6113 /* rules in Resources */,
+				9A102372309F6A5900DC6113 /* shared in Resources */,
+				9A102374309F6A5900DC6113 /* manifest.json in Resources */,
+				9A102371309F6A5900DC6113 /* background.js in Resources */,
+				9A102370309F6A5900DC6113 /* popup in Resources */,
+				9A102373309F6A5900DC6113 /* icons in Resources */,
+				9A102376309F6A5900DC6113 /* content.js in Resources */,
+				9A10236E309F6A5900DC6113 /* ui in Resources */,
+				9A10236F309F6A5900DC6113 /* options in Resources */,
 			);
 		};
-		9A4E8FFB309EF84A00961E65 /* Resources */ = {
+		9A102335309F6A5900DC6113 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			files = (
-				9A4E9032309EF84B00961E65 /* rules in Resources */,
-				9A4E902F309EF84B00961E65 /* shared in Resources */,
-				9A4E9031309EF84B00961E65 /* manifest.json in Resources */,
-				9A4E902E309EF84B00961E65 /* background.js in Resources */,
-				9A4E902D309EF84B00961E65 /* popup in Resources */,
-				9A4E9030309EF84B00961E65 /* icons in Resources */,
-				9A4E9033309EF84B00961E65 /* content.js in Resources */,
-				9A4E902B309EF84B00961E65 /* ui in Resources */,
-				9A4E902C309EF84B00961E65 /* options in Resources */,
+				9A10236C309F6A5900DC6113 /* rules in Resources */,
+				9A102369309F6A5900DC6113 /* shared in Resources */,
+				9A10236B309F6A5900DC6113 /* manifest.json in Resources */,
+				9A102368309F6A5900DC6113 /* background.js in Resources */,
+				9A102367309F6A5900DC6113 /* popup in Resources */,
+				9A10236A309F6A5900DC6113 /* icons in Resources */,
+				9A10236D309F6A5900DC6113 /* content.js in Resources */,
+				9A102365309F6A5900DC6113 /* ui in Resources */,
+				9A102366309F6A5900DC6113 /* options in Resources */,
 			);
 		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		9A4E8FD1309EF84A00961E65 /* Sources */ = {
+		9A10230B309F6A5900DC6113 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			files = (
-				9A4E900B309EF84A00961E65 /* ViewController.swift in Sources */,
-				9A4E8FD9309EF84A00961E65 /* AppDelegate.swift in Sources */,
-				9A4E8FDB309EF84A00961E65 /* SceneDelegate.swift in Sources */,
+				9A102345309F6A5900DC6113 /* ViewController.swift in Sources */,
+				9A102313309F6A5900DC6113 /* AppDelegate.swift in Sources */,
+				9A102315309F6A5900DC6113 /* SceneDelegate.swift in Sources */,
 			);
 		};
-		9A4E8FE3309EF84A00961E65 /* Sources */ = {
+		9A10231D309F6A5900DC6113 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			files = (
-				9A4E900C309EF84A00961E65 /* ViewController.swift in Sources */,
-				9A4E8FEA309EF84A00961E65 /* AppDelegate.swift in Sources */,
+				9A102346309F6A5900DC6113 /* ViewController.swift in Sources */,
+				9A102324309F6A5900DC6113 /* AppDelegate.swift in Sources */,
 			);
 		};
-		9A4E8FEF309EF84A00961E65 /* Sources */ = {
+		9A102329309F6A5900DC6113 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			files = (
-				9A4E900F309EF84A00961E65 /* SafariWebExtensionHandler.swift in Sources */,
+				9A102349309F6A5900DC6113 /* SafariWebExtensionHandler.swift in Sources */,
 			);
 		};
-		9A4E8FF9309EF84A00961E65 /* Sources */ = {
+		9A102333309F6A5900DC6113 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			files = (
-				9A4E9010309EF84A00961E65 /* SafariWebExtensionHandler.swift in Sources */,
+				9A10234A309F6A5900DC6113 /* SafariWebExtensionHandler.swift in Sources */,
 			);
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		9A4E8FF6309EF84A00961E65 /* PBXTargetDependency */ = {
+		9A102330309F6A5900DC6113 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 9A4E8FF2309EF84A00961E65 /* Clink Extension (iOS) */;
-			targetProxy = 9A4E8FF5309EF84A00961E65 /* PBXContainerItemProxy */;
+			target = 9A10232C309F6A5900DC6113 /* Clink Extension (iOS) */;
+			targetProxy = 9A10232F309F6A5900DC6113 /* PBXContainerItemProxy */;
 		};
-		9A4E9000309EF84A00961E65 /* PBXTargetDependency */ = {
+		9A10233A309F6A5900DC6113 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 9A4E8FFC309EF84A00961E65 /* Clink Extension (macOS) */;
-			targetProxy = 9A4E8FFF309EF84A00961E65 /* PBXContainerItemProxy */;
+			target = 9A102336309F6A5900DC6113 /* Clink Extension (macOS) */;
+			targetProxy = 9A102339309F6A5900DC6113 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
-		9A4E8FC8309EF84A00961E65 /* Main.html */ = {
+		9A102302309F6A5800DC6113 /* Main.html */ = {
 			isa = PBXVariantGroup;
 			children = (
-				9A4E8FC9309EF84A00961E65 /* Base */,
+				9A102303309F6A5800DC6113 /* Base */,
 			);
 			name = Main.html;
 			sourceTree = "<group>";
 		};
-		9A4E8FDC309EF84A00961E65 /* LaunchScreen.storyboard */ = {
+		9A102316309F6A5900DC6113 /* LaunchScreen.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
-				9A4E8FDD309EF84A00961E65 /* Base */,
+				9A102317309F6A5900DC6113 /* Base */,
 			);
 			name = LaunchScreen.storyboard;
 			sourceTree = "<group>";
 		};
-		9A4E8FDF309EF84A00961E65 /* Main.storyboard */ = {
+		9A102319309F6A5900DC6113 /* Main.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
-				9A4E8FE0309EF84A00961E65 /* Base */,
+				9A10231A309F6A5900DC6113 /* Base */,
 			);
 			name = Main.storyboard;
 			sourceTree = "<group>";
 		};
-		9A4E8FEB309EF84A00961E65 /* Main.storyboard */ = {
+		9A102325309F6A5900DC6113 /* Main.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
-				9A4E8FEC309EF84A00961E65 /* Base */,
+				9A102326309F6A5900DC6113 /* Base */,
 			);
 			name = Main.storyboard;
 			sourceTree = "<group>";
@@ -503,7 +503,7 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
-		9A4E9011309EF84A00961E65 /* Debug configuration for PBXProject "Clink" */ = {
+		9A10234B309F6A5900DC6113 /* Debug configuration for PBXProject "Clink" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -564,7 +564,7 @@
 			};
 			name = Debug;
 		};
-		9A4E9012309EF84A00961E65 /* Release configuration for PBXProject "Clink" */ = {
+		9A10234C309F6A5900DC6113 /* Release configuration for PBXProject "Clink" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -617,15 +617,15 @@
 			};
 			name = Release;
 		};
-		9A4E9014309EF84A00961E65 /* Debug configuration for PBXNativeTarget "Clink Extension (iOS)" */ = {
+		9A10234E309F6A5900DC6113 /* Debug configuration for PBXNativeTarget "Clink Extension (iOS)" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 4;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "iOS (Extension)/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "Clink Extension";
-				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2026 IA COMPA LLC. Free software under the GNU GPL v3 or later.";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -637,7 +637,7 @@
 					"-framework",
 					SafariServices,
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.clink.Clink.Extension;
+				PRODUCT_BUNDLE_IDENTIFIER = com.iacompa.clink.Extension;
 				PRODUCT_NAME = "Clink Extension";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
@@ -650,15 +650,15 @@
 			};
 			name = Debug;
 		};
-		9A4E9015309EF84A00961E65 /* Release configuration for PBXNativeTarget "Clink Extension (iOS)" */ = {
+		9A10234F309F6A5900DC6113 /* Release configuration for PBXNativeTarget "Clink Extension (iOS)" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 4;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "iOS (Extension)/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "Clink Extension";
-				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2026 IA COMPA LLC. Free software under the GNU GPL v3 or later.";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -670,7 +670,7 @@
 					"-framework",
 					SafariServices,
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.clink.Clink.Extension;
+				PRODUCT_BUNDLE_IDENTIFIER = com.iacompa.clink.Extension;
 				PRODUCT_NAME = "Clink Extension";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
@@ -684,13 +684,13 @@
 			};
 			name = Release;
 		};
-		9A4E9018309EF84A00961E65 /* Debug configuration for PBXNativeTarget "Clink (iOS)" */ = {
+		9A102352309F6A5900DC6113 /* Debug configuration for PBXNativeTarget "Clink (iOS)" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 4;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "iOS (App)/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = Clink;
@@ -711,7 +711,7 @@
 					"-framework",
 					WebKit,
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.clink.Clink;
+				PRODUCT_BUNDLE_IDENTIFIER = com.iacompa.clink;
 				PRODUCT_NAME = Clink;
 				SDKROOT = iphoneos;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -724,13 +724,13 @@
 			};
 			name = Debug;
 		};
-		9A4E9019309EF84A00961E65 /* Release configuration for PBXNativeTarget "Clink (iOS)" */ = {
+		9A102353309F6A5900DC6113 /* Release configuration for PBXNativeTarget "Clink (iOS)" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 4;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "iOS (App)/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = Clink;
@@ -751,7 +751,7 @@
 					"-framework",
 					WebKit,
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.clink.Clink;
+				PRODUCT_BUNDLE_IDENTIFIER = com.iacompa.clink;
 				PRODUCT_NAME = Clink;
 				SDKROOT = iphoneos;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -765,18 +765,18 @@
 			};
 			name = Release;
 		};
-		9A4E901B309EF84A00961E65 /* Debug configuration for PBXNativeTarget "Clink Extension (macOS)" */ = {
+		9A102355309F6A5900DC6113 /* Debug configuration for PBXNativeTarget "Clink Extension (macOS)" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 4;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "macOS (Extension)/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "Clink Extension";
-				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2026 IA COMPA LLC. Free software under the GNU GPL v3 or later.";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -788,7 +788,7 @@
 					"-framework",
 					SafariServices,
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.clink.Clink.Extension;
+				PRODUCT_BUNDLE_IDENTIFIER = com.iacompa.clink.Extension;
 				PRODUCT_NAME = "Clink Extension";
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
@@ -800,18 +800,18 @@
 			};
 			name = Debug;
 		};
-		9A4E901C309EF84A00961E65 /* Release configuration for PBXNativeTarget "Clink Extension (macOS)" */ = {
+		9A102356309F6A5900DC6113 /* Release configuration for PBXNativeTarget "Clink Extension (macOS)" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 4;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "macOS (Extension)/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "Clink Extension";
-				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2026 IA COMPA LLC. Free software under the GNU GPL v3 or later.";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -823,7 +823,7 @@
 					"-framework",
 					SafariServices,
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.clink.Clink.Extension;
+				PRODUCT_BUNDLE_IDENTIFIER = com.iacompa.clink.Extension;
 				PRODUCT_NAME = "Clink Extension";
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
@@ -835,13 +835,13 @@
 			};
 			name = Release;
 		};
-		9A4E901F309EF84A00961E65 /* Debug configuration for PBXNativeTarget "Clink (macOS)" */ = {
+		9A102359309F6A5900DC6113 /* Debug configuration for PBXNativeTarget "Clink (macOS)" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 4;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
@@ -863,7 +863,7 @@
 					"-framework",
 					WebKit,
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.clink.Clink;
+				PRODUCT_BUNDLE_IDENTIFIER = com.iacompa.clink;
 				PRODUCT_NAME = Clink;
 				REGISTER_APP_GROUPS = YES;
 				SDKROOT = macosx;
@@ -876,13 +876,13 @@
 			};
 			name = Debug;
 		};
-		9A4E9020309EF84A00961E65 /* Release configuration for PBXNativeTarget "Clink (macOS)" */ = {
+		9A10235A309F6A5900DC6113 /* Release configuration for PBXNativeTarget "Clink (macOS)" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 4;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
@@ -904,7 +904,7 @@
 					"-framework",
 					WebKit,
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.clink.Clink;
+				PRODUCT_BUNDLE_IDENTIFIER = com.iacompa.clink;
 				PRODUCT_NAME = Clink;
 				REGISTER_APP_GROUPS = YES;
 				SDKROOT = macosx;
@@ -920,48 +920,48 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		9A4E8FC5309EF84900961E65 /* Build configuration list for PBXProject "Clink" */ = {
+		9A1022FF309F6A5800DC6113 /* Build configuration list for PBXProject "Clink" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				9A4E9011309EF84A00961E65 /* Debug configuration for PBXProject "Clink" */,
-				9A4E9012309EF84A00961E65 /* Release configuration for PBXProject "Clink" */,
+				9A10234B309F6A5900DC6113 /* Debug configuration for PBXProject "Clink" */,
+				9A10234C309F6A5900DC6113 /* Release configuration for PBXProject "Clink" */,
 			);
 			defaultConfigurationName = Release;
 		};
-		9A4E9013309EF84A00961E65 /* Build configuration list for PBXNativeTarget "Clink Extension (iOS)" */ = {
+		9A10234D309F6A5900DC6113 /* Build configuration list for PBXNativeTarget "Clink Extension (iOS)" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				9A4E9014309EF84A00961E65 /* Debug configuration for PBXNativeTarget "Clink Extension (iOS)" */,
-				9A4E9015309EF84A00961E65 /* Release configuration for PBXNativeTarget "Clink Extension (iOS)" */,
+				9A10234E309F6A5900DC6113 /* Debug configuration for PBXNativeTarget "Clink Extension (iOS)" */,
+				9A10234F309F6A5900DC6113 /* Release configuration for PBXNativeTarget "Clink Extension (iOS)" */,
 			);
 			defaultConfigurationName = Release;
 		};
-		9A4E9017309EF84A00961E65 /* Build configuration list for PBXNativeTarget "Clink (iOS)" */ = {
+		9A102351309F6A5900DC6113 /* Build configuration list for PBXNativeTarget "Clink (iOS)" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				9A4E9018309EF84A00961E65 /* Debug configuration for PBXNativeTarget "Clink (iOS)" */,
-				9A4E9019309EF84A00961E65 /* Release configuration for PBXNativeTarget "Clink (iOS)" */,
+				9A102352309F6A5900DC6113 /* Debug configuration for PBXNativeTarget "Clink (iOS)" */,
+				9A102353309F6A5900DC6113 /* Release configuration for PBXNativeTarget "Clink (iOS)" */,
 			);
 			defaultConfigurationName = Release;
 		};
-		9A4E901A309EF84A00961E65 /* Build configuration list for PBXNativeTarget "Clink Extension (macOS)" */ = {
+		9A102354309F6A5900DC6113 /* Build configuration list for PBXNativeTarget "Clink Extension (macOS)" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				9A4E901B309EF84A00961E65 /* Debug configuration for PBXNativeTarget "Clink Extension (macOS)" */,
-				9A4E901C309EF84A00961E65 /* Release configuration for PBXNativeTarget "Clink Extension (macOS)" */,
+				9A102355309F6A5900DC6113 /* Debug configuration for PBXNativeTarget "Clink Extension (macOS)" */,
+				9A102356309F6A5900DC6113 /* Release configuration for PBXNativeTarget "Clink Extension (macOS)" */,
 			);
 			defaultConfigurationName = Release;
 		};
-		9A4E901E309EF84A00961E65 /* Build configuration list for PBXNativeTarget "Clink (macOS)" */ = {
+		9A102358309F6A5900DC6113 /* Build configuration list for PBXNativeTarget "Clink (macOS)" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				9A4E901F309EF84A00961E65 /* Debug configuration for PBXNativeTarget "Clink (macOS)" */,
-				9A4E9020309EF84A00961E65 /* Release configuration for PBXNativeTarget "Clink (macOS)" */,
+				9A102359309F6A5900DC6113 /* Debug configuration for PBXNativeTarget "Clink (macOS)" */,
+				9A10235A309F6A5900DC6113 /* Release configuration for PBXNativeTarget "Clink (macOS)" */,
 			);
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
-	rootObject = 9A4E8FC2309EF84900961E65 /* Project object */;
+	rootObject = 9A1022FC309F6A5800DC6113 /* Project object */;
 	validationLevel = 1;
 }

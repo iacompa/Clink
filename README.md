@@ -128,11 +128,12 @@ Then, to run it on this Mac:
 
 4. Go to **Settings → Extensions**, enable **Clink**, and choose **Always Allow on Every Website**.
 
-To ship it through the App Store or put it on an iPhone, run `npm run safari -- --open`, set
-your Team under *Signing & Capabilities* in Xcode, then use **Product → Archive**.
-(`CLINK_BUNDLE_ID=com.you.Clink npm run safari -- --regenerate` sets your own bundle ID.)
-Signing settings you make in Xcode are kept: later `npm run safari` runs only copy in the
-newest extension files.
+To ship it through the App Store, `npm run safari -- --upload` archives signed macOS and iOS
+builds and uploads them to App Store Connect (the team's Apple account must be signed in to
+Xcode). `--archive` stops after exporting them locally. The defaults are IA COMPA's bundle ID
+and team; for your own, set `CLINK_BUNDLE_ID=com.you.Clink CLINK_TEAM_ID=ABCDE12345` and run
+`npm run safari -- --regenerate` once. The app's own window (`safari/app/`) and its icons are
+copied in on every run, so regenerating never loses them.
 
 The converter prints a note that `persistent` isn't supported. That's expected and harmless:
 iOS requires the explicit `"persistent": false`.
@@ -149,8 +150,11 @@ src/
   popup/ options/ ui/  interface
 scripts/
   build.mjs            builds all three browsers; dnr.mjs turns rules.js into network rules
-  safari.mjs           Safari Xcode project + build
-  gen-icons.mjs        renders the icons from icon-svg.mjs
+  safari.mjs           Safari Xcode project + build + App Store upload
+  icon-svg.mjs         the icon, as code; gen-icons.mjs renders it (npm run icons)
+  store-assets.mjs     store screenshots and promo tiles from real captures (npm run assets)
+safari/app/            the Safari app's own window (Mac and iPhone)
+store/                 store artwork: chrome/, firefox/, apple/{mac,iphone,ipad}/
 test/
   unit/                cleaner + network-rule tests (with a declarativeNetRequest simulator)
   e2e/                 real Chromium (Playwright) and the real installed Firefox (WebDriver BiDi)
@@ -159,9 +163,10 @@ test/
 | Command | What it does |
 |---|---|
 | `npm test` | unit tests: more than 90 must-clean and must-not-change URLs, plus a network-rule simulator |
-| `npm run test:e2e` | builds, then drives real Chromium and Firefox through every feature (20 tests) |
+| `npm run test:e2e` | builds, then drives real Chromium and Firefox through every feature (30 tests) |
 | `npm run lint:firefox` | Mozilla's add-on linter |
 | `npm run safari` | Safari Xcode project; compiles for macOS and the iOS Simulator |
+| `npm run icons` / `npm run assets` | re-render the icons / the store artwork |
 
 **To add a tracker:** add it to the right list in `src/shared/rules.js`. Add a must-clean
 URL (and, if it's risky, a must-not-change URL) to `test/unit/cleaner.test.mjs`. Then run

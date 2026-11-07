@@ -636,7 +636,7 @@ api.runtime.onInstalled.addListener((details) => {
 if (api.runtime.onStartup) api.runtime.onStartup.addListener(() => scheduleApply());
 
 (async function boot() {
-  api.action.setBadgeBackgroundColor({ color: '#0f766e' }).catch(swallow);
+  api.action.setBadgeBackgroundColor({ color: '#2f6bf0' }).catch(swallow);
   if (api.action.setBadgeTextColor) api.action.setBadgeTextColor({ color: '#ffffff' }).catch(swallow);
   // Session bypass rules from a previous worker lifetime are stale.
   try {

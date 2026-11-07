@@ -6,7 +6,12 @@
  *   npm run safari -- --open          …and open the project in Xcode
  *   npm run safari -- --regenerate    recreate safari/ from scratch (overwrites Xcode customisations)
  *   npm run safari -- --no-build      only sync the extension files
- *   CLINK_BUNDLE_ID=com.you.Clink npm run safari -- --regenerate
+ *   npm run safari -- --archive       archive signed builds for the App Store (macOS + iOS)
+ *   npm run safari -- --upload        …and upload them to App Store Connect
+ *   CLINK_BUNDLE_ID=com.you.Clink CLINK_TEAM_ID=ABCDE12345 npm run safari -- --regenerate
+ *
+ * Archiving signs with Xcode's automatic signing, so the Apple account for the
+ * team must be signed in to Xcode (Settings → Accounts).
  *
  * The Xcode project in safari/ is generated once with Apple's
  * safari-web-extension-converter and then kept: set your signing team in
@@ -30,7 +35,17 @@ const APP_ASSETS = path.join(PROJ, 'Shared (App)', 'Assets.xcassets');
 const BUILD = path.join(OUT, 'build');
 const pkg = JSON.parse(fs.readFileSync(path.join(ROOT, 'package.json'), 'utf8'));
 const args = new Set(process.argv.slice(2));
-const BUNDLE_ID = process.env.CLINK_BUNDLE_ID || 'com.clink.Clink';
+const BUNDLE_ID = process.env.CLINK_BUNDLE_ID || 'com.iacompa.clink';
+const TEAM_ID = process.env.CLINK_TEAM_ID || 'L98358T6WZ'; // IA COMPA LLC
+const COPYRIGHT = 'Copyright © 2026 IA COMPA LLC. Free software under the GNU GPL v3 or later.';
+// App Store builds need a build number that only goes up: the number of commits.
+const BUILD_NUMBER = (() => {
+  try {
+    return execFileSync('git', ['rev-list', '--count', 'HEAD'], { cwd: ROOT, encoding: 'utf8' }).trim();
+  } catch (_) {
+    return '1';
+  }
+})();
 
 const run = (cmd, argv, opts = {}) => execFileSync(cmd, argv, { stdio: 'inherit', ...opts });
 const step = (msg) => console.log(`\n▸ ${msg}`);
@@ -66,6 +81,9 @@ if (args.has('--regenerate') || !fs.existsSync(XCODEPROJ)) {
     await fsp.rm(PROJ, { recursive: true, force: true }); // don't leave a half-made project behind
     throw e;
   }
+} else {
+  step('Rendering app icons');
+  await appIcons();
 }
 
 // ---------------------------------------------------------------------------
@@ -90,8 +108,34 @@ for (const n of entries) await fsp.cp(path.join(DIST, n), path.join(EXT_RESOURCE
 // and the project uses nothing newer.
 fs.writeFileSync(PBXPROJ, pbx
   .replace(/MARKETING_VERSION = [^;]+;/g, `MARKETING_VERSION = ${pkg.version};`)
+  .replace(/CURRENT_PROJECT_VERSION = [^;]+;/g, `CURRENT_PROJECT_VERSION = ${BUILD_NUMBER};`)
+  .replace(/INFOPLIST_KEY_NSHumanReadableCopyright = [^;]*;/g, `INFOPLIST_KEY_NSHumanReadableCopyright = "${COPYRIGHT}";`)
   .replace(/objectVersion = (\d+);/, (m, v) => (Number(v) > 77 ? 'objectVersion = 77;' : m)));
-console.log(`  ${entries.length} items → ${path.relative(ROOT, EXT_RESOURCES)}  (v${pkg.version})`);
+// The app's own window: our page (safari/app) instead of the converter's
+// placeholder, a roomier Mac window, and scrolling on small iPhones.
+const APP_RES = path.join(PROJ, 'Shared (App)', 'Resources');
+await fsp.cp(path.join(OUT, 'app', 'Main.html'), path.join(APP_RES, 'Base.lproj', 'Main.html'));
+for (const f of ['Style.css', 'Script.js']) await fsp.cp(path.join(OUT, 'app', f), path.join(APP_RES, f));
+const patch = (file, from, to) => {
+  const f = path.join(PROJ, file);
+  fs.writeFileSync(f, fs.readFileSync(f, 'utf8').replaceAll(from, to));
+};
+patch('macOS (App)/Base.lproj/Main.storyboard', 'width="425" height="325"', 'width="560" height="580"');
+patch('Shared (App)/ViewController.swift', 'scrollView.isScrollEnabled = false', 'scrollView.isScrollEnabled = true');
+
+// What App Store Connect asks for: a Mac app category, and the export-compliance
+// answer (Clink uses no encryption of its own).
+const plist = (file, key, type, value) => {
+  const f = path.join(PROJ, file);
+  try {
+    execFileSync('/usr/libexec/PlistBuddy', ['-c', `Set :${key} ${value}`, f], { stdio: 'ignore' });
+  } catch (_) {
+    execFileSync('/usr/libexec/PlistBuddy', ['-c', `Add :${key} ${type} ${value}`, f], { stdio: 'ignore' });
+  }
+};
+for (const app of ['iOS (App)/Info.plist', 'macOS (App)/Info.plist']) plist(app, 'ITSAppUsesNonExemptEncryption', 'bool', 'false');
+plist('macOS (App)/Info.plist', 'LSApplicationCategoryType', 'string', 'public.app-category.productivity');
+console.log(`  ${entries.length} items → ${path.relative(ROOT, EXT_RESOURCES)}  (v${pkg.version}, build ${BUILD_NUMBER})`);
 
 // ---------------------------------------------------------------------------
 // 3. Compile
@@ -122,6 +166,37 @@ Done. To try Clink in Safari on this Mac:
   3. open "${path.relative(ROOT, app)}"   (launch the app once — it registers the extension)
   4. Safari → Settings → Extensions → enable Clink, then “Always Allow on Every Website”.
 To ship it (App Store / iPhone): npm run safari -- --open, set your Team under Signing & Capabilities, then Product → Archive.`);
+}
+
+// ---------------------------------------------------------------------------
+// 4. App Store: archive (and optionally upload) signed builds
+// ---------------------------------------------------------------------------
+
+if (args.has('--archive') || args.has('--upload')) {
+  const upload = args.has('--upload');
+  const options = path.join(BUILD, 'ExportOptions.plist');
+  await fsp.mkdir(BUILD, { recursive: true });
+  fs.writeFileSync(options, `<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0"><dict>
+  <key>method</key><string>app-store-connect</string>
+  <key>destination</key><string>${upload ? 'upload' : 'export'}</string>
+  <key>teamID</key><string>${TEAM_ID}</string>
+  <key>signingStyle</key><string>automatic</string>
+  <key>manageAppVersionAndBuildNumber</key><false/>
+  <key>uploadSymbols</key><true/>
+</dict></plist>`);
+  for (const [platform, scheme] of [['macOS', 'Clink (macOS)'], ['iOS', 'Clink (iOS)']]) {
+    const archive = path.join(BUILD, `Clink-${platform}.xcarchive`);
+    step(`Archiving for ${platform} (team ${TEAM_ID})`);
+    run('xcodebuild', ['-project', XCODEPROJ, '-scheme', scheme, '-configuration', 'Release',
+      '-destination', `generic/platform=${platform}`, '-archivePath', archive, '-allowProvisioningUpdates',
+      `DEVELOPMENT_TEAM=${TEAM_ID}`, 'CODE_SIGN_STYLE=Automatic', '-quiet', 'archive']);
+    step(upload ? `Uploading the ${platform} build to App Store Connect` : `Exporting the ${platform} build`);
+    run('xcodebuild', ['-exportArchive', '-archivePath', archive, '-exportOptionsPlist', options,
+      '-exportPath', path.join(BUILD, `export-${platform}`), '-allowProvisioningUpdates']);
+  }
+  console.log(upload ? '\n✓ Uploaded. The builds appear in App Store Connect → TestFlight after processing.' : '\n✓ Exported to safari/build/export-*');
 }
 
 if (args.has('--open')) run('open', [XCODEPROJ]);

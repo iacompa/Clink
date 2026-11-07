@@ -1,45 +1,46 @@
 /* SPDX-License-Identifier: GPL-3.0-or-later */
 :root {
-  --bg: #f7f8f8;
+  /* IA Compa palette: warm neutrals, the logo blue as the accent, orange as the highlight */
+  --bg: #f5f3ee;
   --surface: #ffffff;
-  --surface-2: #f1f4f3;
-  --border: #e3e8e6;
-  --text: #0f1716;
-  --muted: #5d6b68;
-  --faint: #8a9794;
-  --accent: #0f766e;
-  --accent-2: #14b8a6;
-  --accent-soft: #e2f6f2;
-  --accent-text: #0b5e57;
+  --surface-2: #f0eee8;
+  --border: #e5e2da;
+  --text: #1d1c1a;
+  --muted: #5f5c55;
+  --faint: #8d897f;
+  --accent: #2f6bf0;
+  --accent-2: #ff8a4c;
+  --accent-soft: #eaf0fe;
+  --accent-text: #2252c4;
   --warn: #b45309;
   --warn-soft: #fef3e2;
   --danger: #b42318;
-  --chip: #edf2f1;
-  --chip-text: #334744;
-  --focus: 0 0 0 3px rgba(20, 184, 166, 0.35);
+  --chip: #efede7;
+  --chip-text: #3d3b36;
+  --focus: 0 0 0 3px rgba(47, 107, 240, 0.35);
   --radius: 12px;
-  --shadow: 0 1px 2px rgba(15, 23, 22, 0.05), 0 1px 1px rgba(15, 23, 22, 0.03);
+  --shadow: 0 1px 2px rgba(29, 28, 26, 0.05), 0 1px 1px rgba(29, 28, 26, 0.03);
   color-scheme: light;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg: #0e1312;
-    --surface: #161d1c;
-    --surface-2: #1c2524;
-    --border: #273331;
-    --text: #e8efed;
-    --muted: #9db0ac;
-    --faint: #6f8480;
-    --accent: #2dd4bf;
-    --accent-2: #14b8a6;
-    --accent-soft: #123432;
-    --accent-text: #7ee8d8;
+    --bg: #1f1e1d;
+    --surface: #2a2927;
+    --surface-2: #302f2c;
+    --border: #3a3936;
+    --text: #faf9f5;
+    --muted: #b5b1a8;
+    --faint: #87837b;
+    --accent: #4f83ff;
+    --accent-2: #ff8a4c;
+    --accent-soft: #24304a;
+    --accent-text: #9dbbff;
     --warn: #f5b759;
     --warn-soft: #33270f;
     --danger: #f97066;
-    --chip: #213130;
-    --chip-text: #c7d8d4;
+    --chip: #353430;
+    --chip-text: #dedad1;
     --shadow: none;
     color-scheme: dark;
   }
@@ -97,7 +98,7 @@ button { font: inherit; color: inherit; }
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
   transition: transform 0.15s ease;
 }
-.switch:checked { background: var(--accent-2); }
+.switch:checked { background: var(--accent); }
 .switch:checked::after { transform: translateX(16px); }
 .switch:focus-visible { outline: none; box-shadow: var(--focus); }
 .switch:disabled { opacity: 0.45; cursor: not-allowed; }
@@ -153,4 +154,4 @@ input[type="text"], input[type="url"] {
   color: var(--text);
   font: inherit;
 }
-input[type="text"]:focus, input[type="url"]:focus { outline: none; border-color: var(--accent-2); box-shadow: var(--focus); }
+input[type="text"]:focus, input[type="url"]:focus { outline: none; border-color: var(--accent); box-shadow: var(--focus); }
