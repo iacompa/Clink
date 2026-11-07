@@ -24,7 +24,8 @@ function manifest(target) {
     name: 'Clink — Clean Links',
     short_name: 'Clink',
     version: pkg.version,
-    description: 'Removes tracking junk (utm, fbclid, gclid, si…) from every link you open and skips redirect trackers — without breaking links.',
+    // App Store Connect rejects a Safari extension whose description is over 112 characters.
+    description: 'Removes tracking tags (utm, fbclid, gclid…) from links and skips redirect trackers, without breaking links.',
     homepage_url: 'https://github.com/iacompa/Clink',
     icons: { 16: 'icons/icon-16.png', 32: 'icons/icon-32.png', 48: 'icons/icon-48.png', 128: 'icons/icon-128.png' },
     action: {
@@ -70,6 +71,7 @@ function manifest(target) {
     m.options_ui = { page: m.options_ui.page };
     delete m.content_scripts[0].match_about_blank;
   }
+  if (m.description.length > 112) throw new Error(`manifest description is ${m.description.length} characters; the App Store allows 112`);
   return m;
 }
 

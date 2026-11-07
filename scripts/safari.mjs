@@ -186,12 +186,20 @@ if (args.has('--archive') || args.has('--upload')) {
   <key>manageAppVersionAndBuildNumber</key><false/>
   <key>uploadSymbols</key><true/>
 </dict></plist>`);
+  // --only=ios or --only=macos archives one platform.
+  const only = [...args].find((a) => a.startsWith('--only='))?.slice(7).toLowerCase();
   for (const [platform, scheme] of [['macOS', 'Clink (macOS)'], ['iOS', 'Clink (iOS)']]) {
+    if (only && only !== platform.toLowerCase()) continue;
     const archive = path.join(BUILD, `Clink-${platform}.xcarchive`);
     step(`Archiving for ${platform} (team ${TEAM_ID})`);
     run('xcodebuild', ['-project', XCODEPROJ, '-scheme', scheme, '-configuration', 'Release',
       '-destination', `generic/platform=${platform}`, '-archivePath', archive, '-allowProvisioningUpdates',
-      `DEVELOPMENT_TEAM=${TEAM_ID}`, 'CODE_SIGN_STYLE=Automatic', '-quiet', 'archive']);
+      `DEVELOPMENT_TEAM=${TEAM_ID}`, 'CODE_SIGN_STYLE=Automatic',
+      // iOS: archive unsigned and let the export sign it for the App Store. Automatic signing
+      // would first sign for development, which needs a registered test device — an
+      // App Store-only team may have none.
+      ...(platform === 'iOS' ? ['CODE_SIGNING_ALLOWED=NO'] : []),
+      '-quiet', 'archive']);
     step(upload ? `Uploading the ${platform} build to App Store Connect` : `Exporting the ${platform} build`);
     run('xcodebuild', ['-exportArchive', '-archivePath', archive, '-exportOptionsPlist', options,
       '-exportPath', path.join(BUILD, `export-${platform}`), '-allowProvisioningUpdates']);
