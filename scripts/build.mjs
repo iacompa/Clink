@@ -54,7 +54,7 @@ function manifest(target) {
     m.background = { scripts: [...SHARED, 'background.js'] };
     m.browser_specific_settings = {
       gecko: {
-        id: 'clink@clean-links',
+        id: 'clink@iacompa.com',
         strict_min_version: '140.0',
         data_collection_permissions: { required: ['none'] },
       },

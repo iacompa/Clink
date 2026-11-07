@@ -196,7 +196,7 @@ before(async () => {
     'datareporting.policy.dataSubmissionEnabled': false,
     'app.update.enabled': false,
     'browser.startup.homepage_override.mstone': 'ignore',
-    'extensions.webextensions.uuids': JSON.stringify({ 'clink@clean-links': UUID }),
+    'extensions.webextensions.uuids': JSON.stringify({ 'clink@iacompa.com': UUID }),
     'privacy.query_stripping.enabled': false, // make sure it's Clink doing the work, not Firefox
   };
   await fsp.writeFile(path.join(profile, 'user.js'),
