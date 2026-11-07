@@ -49,8 +49,9 @@ It's built to never break a link:
   affiliate codes for creators you support.
 
 Clink works on links you click, links you type or paste, links that open from other apps and
-email, and URLs you copy from a page. A popup shows what was removed on the current page,
-with a one-click "reload with the original link".
+email, and URLs you copy from a page. A popup shows details about links cleaned on the current
+page. Chrome and Firefox also show tags removed from the page address, with a one-click
+"reload with the original link".
 
 Private by design: Clink runs entirely in your browser. It has no account, no analytics and no
 ads, and it never sends your browsing anywhere. Its counters stay on your device.
@@ -119,5 +120,5 @@ fbclid) from links. To try it: open the Settings app → Apps → Safari → Ext
 it on and allow it on all websites (on a Mac: Safari → Settings → Extensions → Clink, Always
 Allow on Every Website). Then open a link such as
 https://example.com/?utm_source=review&fbclid=test&id=1 in Safari — it loads as
-https://example.com/?id=1. The Clink button in Safari's toolbar shows what was removed. No
-account or sign-in is needed.
+https://example.com/?id=1. Safari does not show removed tags for typed or pasted page addresses.
+The Clink button shows details about links cleaned within a page. No account or sign-in is needed.

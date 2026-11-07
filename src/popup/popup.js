@@ -24,7 +24,8 @@
   }
   let info = (tab && (await send({ type: 'clink:popup', tabId: tab.id }))) || {};
 
-  $('version').textContent = 'v' + api.runtime.getManifest().version;
+  const version = api.runtime.getManifest().version.split('.').slice(0, 2).join('.').replace(/\.0$/, '');
+  $('version').textContent = `Version ${version}`;
 
   // -------------------------------------------------------------------------
   // Rendering

@@ -179,7 +179,8 @@
     $('guardUnavailable').classList.remove('hidden');
   }
 
-  $('version').textContent = `Clink v${api.runtime.getManifest().version}`;
+  const version = api.runtime.getManifest().version.split('.').slice(0, 2).join('.').replace(/\.0$/, '');
+  $('version').textContent = `Clink · Version ${version}`;
   render();
   renderStats();
 })();

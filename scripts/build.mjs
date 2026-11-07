@@ -59,14 +59,13 @@ function manifest(target) {
         strict_min_version: '140.0',
         data_collection_permissions: { required: ['none'] },
       },
-      gecko_android: { strict_min_version: '142.0' },
     };
   } else if (target === 'safari') {
     // iOS/iPadOS only run non-persistent backgrounds (the converter insists on
     // the explicit flag), and Safari has no webRequest for those — so Link
     // Guard is unavailable there.
     m.background = { scripts: [...SHARED, 'background.js'], persistent: false };
-    m.permissions = ['declarativeNetRequest', 'storage'];
+    m.permissions = ['declarativeNetRequest', 'declarativeNetRequestWithHostAccess', 'storage'];
     // Keys Safari doesn't support (the Xcode converter warns about them).
     m.options_ui = { page: m.options_ui.page };
     delete m.content_scripts[0].match_about_blank;
@@ -90,6 +89,7 @@ async function build(target) {
   const out = path.join(DIST, target);
   await fs.rm(out, { recursive: true, force: true });
   await copyDir(SRC, out);
+  await fs.copyFile(path.join(ROOT, 'LICENSE'), path.join(out, 'ui', 'LICENSE.txt'));
 
   const flavor = target === 'safari' ? 'safari' : 'standard';
   const sets = generateRulesets(flavor);
