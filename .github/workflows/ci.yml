@@ -55,6 +55,8 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      - name: Install headless Chromium
+        run: npx playwright install --with-deps chromium
       - name: Compile the Safari app
         run: |
           xcodebuild -version
