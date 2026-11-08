@@ -9,6 +9,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { generateRulesets, RULESET_IDS } from '../../scripts/dnr.mjs';
 import '../../src/shared/cleaner.js';
+import { GLOBAL as LONG_TAIL, SITE_ONLY } from './long-tail-params.mjs';
 
 const C = globalThis.ClinkCleaner;
 
@@ -170,6 +171,21 @@ test('Safari rules clean the common cases and never break the protected ones', (
     }
   }
   assert.equal(simulate(allSafari, 'https://example.com/?utm_source=a&fbclid=b&x=1'), 'https://example.com/?x=1');
+});
+
+test('network rules remove each long-tail tracker in Chrome, Firefox and Safari', () => {
+  const opts = Object.assign({}, C.DEFAULT_OPTIONS, { unwrap: false });
+  for (const p of Object.values(LONG_TAIL).flat()) {
+    const url = `https://shop.example.com/p/1?id=42&${p}=abc123`;
+    assert.equal(simulate(allStandard, url), 'https://shop.example.com/p/1?id=42', `Chrome/Firefox: ${p}`);
+    assert.equal(simulate(allSafari, url), 'https://shop.example.com/p/1?id=42', `Safari: ${p}`);
+  }
+  for (const [onSite, elsewhere] of SITE_ONLY) {
+    assert.equal(simulate(allStandard, onSite), C.clean(onSite, opts).url, onSite);
+    assert.equal(simulate(allSafari, onSite), C.clean(onSite, opts).url, `Safari: ${onSite}`);
+    assert.equal(simulate(allStandard, elsewhere), elsewhere, elsewhere);
+    assert.equal(simulate(allSafari, elsewhere), elsewhere, `Safari: ${elsewhere}`);
+  }
 });
 
 test('category rulesets are independent (toggling one keeps the others working)', () => {

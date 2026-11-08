@@ -3,6 +3,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import '../../src/shared/rules.js';
 import '../../src/shared/cleaner.js';
+import { GLOBAL as LONG_TAIL, SITE_ONLY, NOT_ADDED } from './long-tail-params.mjs';
 
 const C = globalThis.ClinkCleaner;
 const b64url = (s) => Buffer.from(s).toString('base64url');
@@ -150,6 +151,35 @@ const MUST_NOT_CHANGE = [
   'https://news.example.com/opting-out?mc_eid=abc&utm_source=x',
   'https://lists.example.com/newsletter-optin/confirm?mc_eid=1&utm_source=x',
 ];
+
+test('removes the long-tail trackers, each in its own category', () => {
+  for (const [category, params] of Object.entries(LONG_TAIL)) {
+    for (const p of params) {
+      const r = C.clean(`https://shop.example.com/p/1?${p}=abc123&id=42`);
+      assert.equal(r.url, 'https://shop.example.com/p/1?id=42', p);
+      assert.deepEqual(r.removed, [p], p);
+      assert.equal(C.trackerCategory(p, 'https://shop.example.com/'), category, p);
+    }
+  }
+  // A real-looking email link with several vendors' tags at once.
+  assert.equal(
+    C.clean('https://store.example.com/sale?sfmc_id=8812&sfmc_activityid=55&dm_i=1AB,2CD&xtor=EPR-1&awc=6_1700_abc&size=m').url,
+    'https://store.example.com/sale?size=m'
+  );
+});
+
+test('site-only trackers are removed on their site and kept everywhere else', () => {
+  for (const [onSite, elsewhere] of SITE_ONLY) {
+    const r = C.clean(onSite);
+    assert.equal(r.changed, true, onSite);
+    assert.ok(!/sr_share|mbid|hmb_|icid/.test(r.url), `${onSite} → ${r.url}`);
+    assert.equal(C.clean(elsewhere).url, elsewhere, elsewhere);
+  }
+  for (const p of NOT_ADDED) {
+    const url = `https://example.com/p?${p}=1`;
+    assert.equal(C.clean(url).url, url, `${p} was deliberately not added`);
+  }
+});
 
 test('cleans tracking junk', () => {
   for (const [input, expected] of MUST_CLEAN) {

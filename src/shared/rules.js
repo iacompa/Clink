@@ -61,12 +61,20 @@
     'twclid', '__twitter_impression',
     // TikTok, LinkedIn, Pinterest, Snapchat, Reddit, Quora
     'ttclid', 'li_fat_id', 'epik', 'sccid', 'ScCid', 'rdt_cid', 'qclid',
-    // Yandex
-    'yclid', 'ysclid', '_openstat',
-    // Adobe
-    's_kwcid', 'ef_id',
+    // Yandex (Direct, Metrika)
+    'yclid', 'ysclid', '_openstat', 'clckid', 'ym_tracking_id',
+    // Adobe (Analytics, and Analytics-for-Target redirects)
+    's_kwcid', 'ef_id', 'adobe_mc_ref', 'adobe_mc_sdid',
     // Outbrain / Taboola / Zalo
     'dicbo', 'obOrigUrl', 'tblci', 'gidzl',
+    // Ad clicks: Telegram Ads, Prisjakt, Adsterra
+    'tgclid', 'pjclid', 'adsterra_clid', 'adsterra_placement_id',
+    // LINE and LY Corporation (Yahoo! JAPAN) ads
+    'ldtag_cl', 'line_uid', '_ly_c', '_ly_r', 'yj_r',
+    // VK MyTracker click IDs
+    'mt_click_id', 'mt_link_id',
+    // Cxense (Piano) recommendation clicks
+    'cx_click', 'cx_recsOrder', 'cx_recsWidget',
     // Branch deep links
     '_branch_match_id', '_branch_referrer',
     // Email & marketing-automation subscriber IDs (these identify *you*)
@@ -87,7 +95,14 @@
     'spJobID', 'spMailingID', 'spReportId', 'spUserID',       // Salesforce / Silverpop
     'et_cid', 'et_rid',                                       // ExactTarget
     'vgo_ee',                                                 // ActiveCampaign
+    'sfmc_id',                                                // Salesforce Marketing Cloud
+    'dm_i',                                                   // Dotdigital
+    'ems_dl', 'emcs_t',                                       // Emarsys
+    'mindbox-click-id', 'mindbox-message-key',                // Mindbox
+    'tw_profile_id',                                          // Triple Whale (Klaviyo)
+    'sms_click', 'sms_uph',                                   // SMS marketing click / phone IDs
     'nr_email_referer', 'wickedid', 'rb_clickid', '_bhlid',
+    'redirect_mongo_id', 'redirect_log_mongo_id',             // Redir link shortener
     // Shopify product-recommendation tracking
     'pr_prod_strat', 'pr_rec_id', 'pr_rec_pid', 'pr_ref_pid', 'pr_seq',
   ];
@@ -119,16 +134,35 @@
     'at_ptr_name', 'at_link_id', 'at_link_origin', 'at_link_type', 'at_bbc_team',
     'at_campaign_type', 'at_format', 'at_objective', 'at_platform', 'at_creation',
     'at_variant', 'at_send_date', 'at_recipient_id', 'at_recipient_list', 'at_emailtype',
+    // AT Internet (Piano) campaign tag
+    'xtor',
     // Misc campaign tagging schemes
     'itm_source', 'itm_medium', 'itm_campaign', 'itm_content', 'itm_term',
     'stm_source', 'stm_medium', 'stm_campaign', 'stm_content', 'stm_term',
-    's_cid', 'cm_mmc', 'cm_ven', 'cm_cat', 'cm_pla', 'cm_ite', 'cm_lm',
+    'int_source', 'int_medium', 'int_campaign', 'int_content', 'int_term',
+    's_cid', 'cm_mmc', 'cm_ven', 'cm_cat', 'cm_pla', 'cm_ite', 'cm_lm', 'cm_me', 'cm_cr',
     'WT.mc_id', 'WT.mc_ev', 'WT.srch', 'wt_mc', 'wt_zmc',
+    // DPG Media (Dutch and Belgian news sites)
+    'dpg_source', 'dpg_medium', 'dpg_campaign', 'dpg_content',
+    // Segmentify
+    '_sgm_campaign', '_sgm_source', '_sgm_action', '_sgm_term', '_sgm_pinned',
+    // Triple Whale (Klaviyo)
+    'tw_source', 'tw_medium',
+    // VK MyTracker
+    'mt_network', 'mt_campaign', 'mt_adset', 'mt_creative', 'mt_medium',
+    'mt_sub1', 'mt_sub2', 'mt_sub3', 'mt_sub4', 'mt_sub5',
+    // Salesforce Marketing Cloud, SMS marketing, OpenWeb (Spot.IM) comment links
+    'sfmc_activityid', 'sms_source', 'spot_im_redirect_source',
   ];
 
   // Affiliate-network click IDs (only network-specific names; never generic "ref"/"aff").
   const AFFILIATE = [
-    'cjevent', 'cjdata', 'irclickid', 'irgwc', 'ranMID', 'ranEAID', 'ranSiteID',
+    'cjevent', 'cjdata',                                      // CJ
+    'irclickid', 'irgwc', 'ir_campaignid', 'ir_adid', 'ir_partnerid', // impact.com
+    'ranMID', 'ranEAID', 'ranSiteID',                         // Rakuten
+    'awc', 'zanpid',                                          // Awin (and Zanox, now Awin)
+    'sscid',                                                  // ShareASale
+    'admitad_uid',                                            // Admitad
   ];
 
   // ---------------------------------------------------------------------------
@@ -262,6 +296,13 @@
       params: ['guce_referrer', 'guce_referrer_sig', 'ncid', 'soc_src', 'soc_trk', 'tsrc'],
       // Deliberately kept: guccounter (consent flow — stripping it can loop).
     },
+    { name: 'TechCrunch', domains: ['techcrunch.com'], params: ['sr_share'] },
+    // Not global: MusicBrainz and others use mbid as a real record ID.
+    { name: 'Condé Nast', domains: ['wired.com', 'wired.co.uk', 'newyorker.com'], params: ['mbid'] },
+    { name: 'Humble Bundle', domains: ['humblebundle.com'], params: ['hmb_source', 'hmb_medium', 'hmb_campaign'] },
+    // Not global: "icid" is a generic name; only these sites are known to use it for tracking.
+    { name: 'Kaspersky', domains: ['kaspersky.com'], params: ['icid'] },
+    { name: 'NotebookLM', domains: ['notebooklm.google.com'], params: ['icid'] },
     {
       name: 'News sites',
       domains: ['nytimes.com'],
