@@ -188,7 +188,9 @@
 
   if (!HAS_LINK_GUARD) $('guardUnavailable').classList.remove('hidden');
 
-  const version = api.runtime.getManifest().version.split('.').slice(0, 2).join('.').replace(/\.0$/, '');
+  // Public versions always have exactly one decimal point: 1.0, 1.1, 2.0 (never 1 or 1.0.0).
+  const [major, minor = '0'] = api.runtime.getManifest().version.split('.');
+  const version = `${major}.${minor}`;
   $('version').textContent = `Clink · Version ${version}`;
   render();
   renderStats();

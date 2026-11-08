@@ -58,6 +58,17 @@ ads, and it never sends your browsing anywhere. Its counters stay on your device
 
 Free and open source under the GNU GPL v3: https://github.com/iacompa/Clink
 
+## What's new in 1.1 (release notes)
+
+For App Store "What's New in This Version" and Firefox Add-ons "Release notes". The Chrome
+Web Store has no release-notes field.
+
+> • Removes 74 more tracking tags, mostly from email newsletters and ad networks.
+> • New Strict setting, off by default: it also removes trackers that a few sites need, and
+>   still skips the sites known to need them.
+> • Email click links sent with Oracle Eloqua are now left whole, so they always open the right
+>   page.
+
 ## Categories
 
 - Chrome Web Store: **Privacy & Security** (fallback: Tools)

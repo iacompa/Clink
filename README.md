@@ -94,7 +94,7 @@ The build writes `dist/chrome`, `dist/firefox` and `dist/safari`, plus store-rea
 3. Pin Clink from the puzzle-piece menu.
 
 An unpacked extension stays installed across restarts. To publish, upload
-`dist/clink-chrome-1.0.0.zip` to the Chrome Web Store developer dashboard.
+`dist/clink-chrome-<version>.zip` to the Chrome Web Store developer dashboard.
 Chrome 116 or newer is required.
 
 ### Firefox (desktop 140+, Android 142+)
@@ -110,7 +110,7 @@ Chrome 116 or newer is required.
   ```
 
   This gives you a signed `.xpi` in `web-ext-artifacts/`; drag it into Firefox. To publish
-  publicly, upload `dist/clink-firefox-1.0.0.zip` to addons.mozilla.org.
+  publicly, upload `dist/clink-firefox-<version>.zip` to addons.mozilla.org.
 
 ### Safari (macOS and iOS)
 
