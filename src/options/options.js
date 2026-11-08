@@ -47,7 +47,7 @@
       warn.dataset.warning = id;
       warn.textContent = `${cat.warning} ${HAS_LINK_GUARD
         ? 'With Link Guard on, a link that breaks is reopened as the original and Clink stops cleaning that site.'
-        : 'Safari can’t tell when a page breaks, so if one does, use “Reload with the original link” in Clink’s popup.'}`;
+        : 'Safari can’t tell when a page breaks. If one does, pause Clink for that site in the popup, then reopen the original link.'}`;
       desc.append(warn);
     }
     text.append(title, desc);
@@ -135,13 +135,21 @@
   }
 
   // ---- events
-  $('enabled').addEventListener('change', (e) => save((s) => { s.enabled = e.target.checked; }));
+  $('enabled').addEventListener('change', (e) => {
+    const checked = e.target.checked;
+    save((s) => { s.enabled = checked; });
+  });
   catBox.addEventListener('change', (e) => {
     const id = e.target.dataset.category;
-    if (id) save((s) => { s.categories[id] = e.target.checked; });
+    const checked = e.target.checked;
+    if (id) save((s) => { s.categories[id] = checked; });
   });
   for (const sw of document.querySelectorAll('[data-setting]')) {
-    sw.addEventListener('change', (e) => save((s) => { s[sw.dataset.setting] = e.target.checked; }));
+    sw.addEventListener('change', (e) => {
+      const id = sw.dataset.setting;
+      const checked = e.target.checked;
+      save((s) => { s[id] = checked; });
+    });
   }
   $('addPaused').addEventListener('submit', (e) => {
     e.preventDefault();

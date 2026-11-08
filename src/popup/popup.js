@@ -169,8 +169,9 @@
   }
 
   $('masterSwitch').addEventListener('change', async (e) => {
+    const checked = e.target.checked;
     settings = await S.update((s) => {
-      s.enabled = e.target.checked;
+      s.enabled = checked;
     });
     render();
   });
