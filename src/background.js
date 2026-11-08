@@ -23,7 +23,7 @@ const C = globalThis.ClinkCleaner;
 const S = globalThis.ClinkSettings;
 const dnr = api.declarativeNetRequest;
 
-const CATEGORY_RULESETS = ['trackers', 'campaign', 'sites', 'affiliate'];
+const CATEGORY_RULESETS = ['trackers', 'campaign', 'sites', 'affiliate', 'strict'];
 const SAFETY_RULESET = 'safety';
 const PAUSE_PRIORITY = 200;
 const TRIAL_PRIORITY = 300;

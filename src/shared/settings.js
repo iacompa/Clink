@@ -7,7 +7,7 @@
 
   const DEFAULTS = Object.freeze({
     enabled: true,
-    categories: Object.freeze({ trackers: true, campaign: true, sites: true, affiliate: true }),
+    categories: Object.freeze({ trackers: true, campaign: true, sites: true, affiliate: true, strict: false }),
     unwrapRedirects: true, // skip google.com/url, l.facebook.com … hops
     removePing: true, // strip <a ping> click beacons
     cleanOnCopy: true, // clean URLs you copy from page text

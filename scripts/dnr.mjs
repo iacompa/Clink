@@ -23,8 +23,14 @@ import '../src/shared/rules.js';
 
 const R = globalThis.ClinkRules;
 
-export const RULESET_IDS = ['trackers', 'campaign', 'sites', 'affiliate', 'safety'];
-export const PRIORITY = { campaign: 1, trackers: 2, affiliate: 3, sites: 4, siteAffiliate: 5, path: 6, safety: 100 };
+export const RULESET_IDS = ['trackers', 'campaign', 'sites', 'affiliate', 'strict', 'safety'];
+// Strict sits below everything else, with its "keep" allow rules just above it:
+// those block only Strict, so the other categories still clean the same URL first.
+export const PRIORITY = {
+  strict: 1, strictKeep: 2, campaign: 3, trackers: 4, affiliate: 5, sites: 6, siteAffiliate: 7, path: 8, safety: 100,
+};
+// Off until the user turns Strict on (the background worker enables it).
+export const DISABLED_BY_DEFAULT = ['strict'];
 
 const uniq = (a) => [...new Set(a)];
 const escapeRe = (s) => s.replace(/[.*+?^${}()|[\]\\/]/g, '\\$&');
@@ -104,6 +110,19 @@ export function generateRulesets(flavor) {
     addGroup(c.category, PRIORITY.sites, c.params, { triggers: c.when });
   }
 
+  // ---- strict: one group per vendor, never on the URLs known to need them
+  for (const g of R.STRICT) addGroup('strict', PRIORITY.strict, g.params);
+  const keepOn = uniq(R.STRICT.flatMap((g) => g.keepOn || []));
+  const strictKeep = (condition) => push('strict', {
+    priority: PRIORITY.strictKeep,
+    action: { type: 'allow' },
+    condition: { resourceTypes: ['main_frame'], ...condition },
+  });
+  if (keepOn.length) strictKeep({ requestDomains: keepOn });
+  for (const p of uniq(R.STRICT.flatMap((g) => g.keepPaths || []))) {
+    strictKeep({ urlFilter: p, isUrlFilterCaseSensitive: false });
+  }
+
   // ---- safety: allow rules outrank every cleaning rule
   const allow = (condition) => push('safety', {
     priority: PRIORITY.safety,
@@ -124,6 +143,7 @@ export function generateRulesets(flavor) {
   for (const p of R.SAFETY.signatureParams) {
     for (const urlFilter of [`?${p}=`, `&${p}=`]) allow({ urlFilter, isUrlFilterCaseSensitive: false });
   }
+  for (const p of R.SAFETY.redirectPaths) allow({ urlFilter: p, isUrlFilterCaseSensitive: false });
 
   if (flavor === 'standard') {
     allow({ regexFilter: '^https?://(?:\\d{1,3}\\.){3}\\d{1,3}(?::\\d+)?(?:[/?#]|$)' });

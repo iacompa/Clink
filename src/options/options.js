@@ -14,7 +14,10 @@
     campaign: ['utm_source', 'utm_medium', 'utm_campaign', 'pk_campaign'],
     sites: ['si (YouTube/Spotify)', 'pd_rd_* (Amazon)', 'ref_src (X)', 'trackingId (LinkedIn)'],
     affiliate: ['tag (Amazon)', 'cjevent', 'irclickid', 'aff_* (AliExpress)'],
+    strict: ['cmpid', 'elq', 'gps_adid', 'af_adset', 'adjust_tracker'],
   };
+  // Link Guard needs webRequest (not available in Safari)
+  const HAS_LINK_GUARD = !!(api.webRequest && api.webRequest.onBeforeRedirect);
 
   // ---- category rows
   const catBox = $('categories');
@@ -38,6 +41,15 @@
       chips.append(c);
     }
     desc.append(chips);
+    if (cat.warning) {
+      const warn = document.createElement('div');
+      warn.className = 'warn small';
+      warn.dataset.warning = id;
+      warn.textContent = `${cat.warning} ${HAS_LINK_GUARD
+        ? 'With Link Guard on, a link that breaks is reopened as the original and Clink stops cleaning that site.'
+        : 'Safari can’t tell when a page breaks, so if one does, use “Reload with the original link” in Clink’s popup.'}`;
+      desc.append(warn);
+    }
     text.append(title, desc);
     const sw = document.createElement('input');
     sw.type = 'checkbox';
@@ -174,10 +186,7 @@
     /* ignore */
   }
 
-  // Link Guard needs webRequest (not available in Safari)
-  if (!(api.webRequest && api.webRequest.onBeforeRedirect)) {
-    $('guardUnavailable').classList.remove('hidden');
-  }
+  if (!HAS_LINK_GUARD) $('guardUnavailable').classList.remove('hidden');
 
   const version = api.runtime.getManifest().version.split('.').slice(0, 2).join('.').replace(/\.0$/, '');
   $('version').textContent = `Clink · Version ${version}`;

@@ -452,7 +452,58 @@
       'x-amz-signature', 'x-amz-credential', 'x-goog-signature', 'x-goog-credential',
       'signature', 'sig', 'hmac', 'x-signature', 'key-pair-id', 'googleaccessid',
     ],
+    // Email click-tracking redirects that need their IDs to find the page
+    // (Oracle Eloqua's /e/er, often on the sender's own domain; AdGuard records
+    // breakage). The page they redirect to is still cleaned.
+    redirectPaths: ['/e/er?'],
   };
+
+  // ---------------------------------------------------------------------------
+  // Strict — real trackers that some sites also need, so removing them can
+  // break a link. Off by default; the user opts in under "What to remove".
+  //
+  // Each group lists where it is known to be needed (from breakage reports in
+  // AdGuard's URL-tracking allowlist), and Strict never touches a URL there:
+  // `keepOn` domains (and their subdomains) and `keepPaths`, matched anywhere in
+  // the path and query. On any of those URLs no Strict group runs at all, which
+  // is how the network layer behaves too (one allow rule covers the ruleset).
+  // ---------------------------------------------------------------------------
+
+  const STRICT = [
+    {
+      name: 'Oracle Eloqua',
+      params: ['elq', 'elqak', 'cmpid'],
+      // Eloqua's own links, and an ad server that reads cmpid. (Eloqua's /e/er
+      // redirects are never touched at all: see SAFETY.redirectPaths.)
+      keepOn: ['eloqua.com', 'cleviationly.com'],
+    },
+    {
+      name: 'Adjust',
+      params: ['adj_t', 'adj_label', 'adj_campaign', 'adj_creative', 'adjust_tracker',
+        'adjust_tracker_limit', 'adjust_campaign', 'adjust_adgroup', 'adjust_creative',
+        'adjust_referrer', 'gps_adid', 'unicorn_click_id'],
+      // Adjust's own app links are configured by these parameters.
+      keepOn: ['adjust.com', 'adj.st', 'go.link'],
+    },
+    {
+      name: 'AppsFlyer',
+      params: ['af_xp', 'af_ad', 'af_adset', 'af_click_lookback', 'af_force_deeplink', 'is_retargeting'],
+      // AppsFlyer's OneLink app links are configured by these parameters.
+      keepOn: ['onelink.me', 'appsflyer.com'],
+    },
+    {
+      name: 'Shopify analytics',
+      params: ['analytics_trace_id', 'analytics_context'],
+      // Shopify's sign-in flow (on every shop's own domain) carries them through.
+      keepOn: ['shopify.com'],
+      keepPaths: ['/authentication/'],
+    },
+    {
+      name: 'Russian ad registry token',
+      params: ['erid'],
+      keepOn: ['lifehacker.ru', 'forbes.ru', 'kommersant.ru'],
+    },
+  ];
 
   const CATEGORIES = {
     trackers: {
@@ -471,6 +522,12 @@
       label: 'Affiliate & referral codes',
       description: 'Commission codes like Amazon tag=. Turn off if you want creators to get credit for your purchases.',
     },
+    strict: {
+      label: 'Strict: trackers that some sites need',
+      description: 'Also removes trackers that a few sites rely on (Eloqua email IDs, Adjust and AppsFlyer app-attribution IDs, your phone’s advertising ID gps_adid…). The sites known to need them are skipped, but other links may break.',
+      warning: 'Off by default because it can break links.',
+      strict: true,
+    },
   };
 
   root.ClinkRules = Object.freeze({
@@ -479,6 +536,7 @@
     TRACKERS,
     CAMPAIGN,
     AFFILIATE,
+    STRICT,
     // page-layer only: any parameter starting with these is a campaign tag
     CAMPAIGN_PREFIXES: ['utm_', 'mtm_', 'matomo_', 'hsa_'],
     TRACKER_PREFIXES: ['bsft_'],

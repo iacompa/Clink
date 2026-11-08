@@ -35,7 +35,30 @@ export const SITE_ONLY = [
   ['https://notebooklm.google.com/?icid=home_maincta', 'https://example.com/?icid=1'],
 ];
 
-// Considered and deliberately left alone (functional elsewhere, or no evidence it is a tracker).
+// Kept by default: some are in Strict (off unless the user turns it on), the
+// rest were left out (functional elsewhere, or no evidence they are trackers).
 export const NOT_ADDED = [
   'cmpid', 'tduid', 'elq', 'km_source', 'sb_referer_host', 'af_adset', 'adjust_tracker', 'fb_comment_id',
 ];
+
+// With Strict on: [url, expected]. These are the places Strict trackers are
+// needed, so Strict leaves them (and only them) in place.
+export const STRICT_KEEP = [
+  ['https://app.adjust.com/abc123?campaign=x&adjust_tracker=abc&utm_source=y',
+    'https://app.adjust.com/abc123?campaign=x&adjust_tracker=abc'],
+  ['https://yandex.go.link/route?adj_t=abc&gps_adid=1', 'https://yandex.go.link/route?adj_t=abc&gps_adid=1'],
+  ['https://myapp.onelink.me/AbCd?pid=email&af_adset=spring&af_xp=social&fbclid=1',
+    'https://myapp.onelink.me/AbCd?pid=email&af_adset=spring&af_xp=social'],
+  ['https://shop.example.com/authentication/login?analytics_trace_id=abc&utm_source=x',
+    'https://shop.example.com/authentication/login?analytics_trace_id=abc'],
+  ['https://lifehacker.ru/article/?erid=abc&utm_source=x', 'https://lifehacker.ru/article/?erid=abc'],
+  ['https://cleviationly.com/adServe/aff?cmpid=mydealz1&dlink=x', 'https://cleviationly.com/adServe/aff?cmpid=mydealz1&dlink=x'],
+  ['https://s123.t.eloqua.com/e/f2?elq=abc&elqak=def', 'https://s123.t.eloqua.com/e/f2?elq=abc&elqak=def'],
+  // …and everywhere else Strict removes them along with everything else
+  ['https://shop.example.com/p?utm_source=x&gps_adid=1&fbclid=2&cmpid=3&erid=4&id=1', 'https://shop.example.com/p?id=1'],
+  ['https://forbes.com/sites/x/?erid=abc', 'https://forbes.com/sites/x/'],
+];
+
+// Oracle Eloqua click redirects: never modified, so they can find the page.
+export const ELOQUA_REDIRECT =
+  'https://clk.texaslonghorns.com/e/er?s=1740541080&lid=123&elqTrackId=abc&elq=def&elqaid=1&elqat=1&utm_source=x';

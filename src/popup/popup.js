@@ -197,6 +197,7 @@
   // ---- Clean a link
   const SKIP_REASON = {
     signed: 'Left as-is: this is a signed link — changing it would break it.',
+    redirect: 'Left as-is: this email redirect needs its IDs to find the page. Clink cleans the page it opens.',
     preferences: 'Left as-is: looks like an unsubscribe or email-preferences link, which needs its IDs.',
     auth: 'Left as-is: sign-in and payment links are never modified.',
     tool: 'Left as-is: marketing-tool links keep their tags.',

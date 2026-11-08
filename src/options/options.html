@@ -96,6 +96,7 @@
       <ul class="bullets muted">
         <li>Unsubscribe, email-preference and opt-in links (they need their IDs to know who you are).</li>
         <li>Signed links (S3, Google Cloud, Azure, CloudFront…) — changing them would break them.</li>
+        <li>Email click redirects that need their IDs to find the page (Eloqua) — the page they open is still cleaned.</li>
         <li>Sign-in and checkout pages (Google, Microsoft, Apple, PayPal, Stripe, Shopify…).</li>
         <li>Marketing dashboards like Google Analytics and campaign URL builders.</li>
         <li><code>localhost</code>, <code>.test</code>, <code>.local</code> and private IP addresses.</li>

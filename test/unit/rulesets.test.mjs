@@ -7,9 +7,9 @@
  */
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { generateRulesets, RULESET_IDS } from '../../scripts/dnr.mjs';
+import { generateRulesets, RULESET_IDS, DISABLED_BY_DEFAULT } from '../../scripts/dnr.mjs';
 import '../../src/shared/cleaner.js';
-import { GLOBAL as LONG_TAIL, SITE_ONLY } from './long-tail-params.mjs';
+import { GLOBAL as LONG_TAIL, SITE_ONLY, NOT_ADDED, STRICT_KEEP, ELOQUA_REDIRECT } from './long-tail-params.mjs';
 
 const C = globalThis.ClinkCleaner;
 
@@ -76,8 +76,12 @@ function simulate(rules, url) {
 
 const standard = generateRulesets('standard');
 const safari = generateRulesets('safari');
-const allStandard = RULESET_IDS.flatMap((id) => standard[id]);
-const allSafari = RULESET_IDS.flatMap((id) => safari[id]);
+// What a fresh install runs (Strict is off), and everything with Strict on.
+const DEFAULT_IDS = RULESET_IDS.filter((id) => !DISABLED_BY_DEFAULT.includes(id));
+const allStandard = DEFAULT_IDS.flatMap((id) => standard[id]);
+const allSafari = DEFAULT_IDS.flatMap((id) => safari[id]);
+const strictStandard = RULESET_IDS.flatMap((id) => standard[id]);
+const strictSafari = RULESET_IDS.flatMap((id) => safari[id]);
 
 test('rulesets are structurally valid', () => {
   for (const [name, sets] of [['standard', standard], ['safari', safari]]) {
@@ -96,11 +100,11 @@ test('rulesets are structurally valid', () => {
       }
     }
   }
-  const regexCount = allStandard.filter((r) => r.condition.regexFilter).length;
+  const regexCount = strictStandard.filter((r) => r.condition.regexFilter).length;
   assert.ok(regexCount < 1000, `Chrome allows 1000 regex rules, have ${regexCount}`);
-  assert.ok(allStandard.length < 30000 && allSafari.length < 30000);
+  assert.ok(strictStandard.length < 30000 && strictSafari.length < 30000);
   // Safari flavor must not use features its engine lacks
-  for (const r of allSafari) {
+  for (const r of strictSafari) {
     assert.ok(!r.condition.regexFilter, 'no regex in Safari rules');
     assert.ok(!r.condition.requestMethods, 'no requestMethods in Safari rules');
     assert.ok(!r.condition.initiatorDomains, 'no initiatorDomains in Safari rules');
@@ -110,6 +114,8 @@ test('rulesets are structurally valid', () => {
 
 // URLs where the network layer should produce exactly what the page layer does.
 const AGREE = [
+  ELOQUA_REDIRECT,
+  'https://example.com/e/error?elqTrackId=abc&id=1',
   // a /ref= *path* segment must not stop the query trackers from being removed
   'https://www.amazon.com/gp/bestsellers/electronics/ref=zg_bs_nav_0?fbclid=IwAR123&utm_source=fb',
   'https://www.amazon.com/s/ref=nb_sb_noss?url=search-alias%3Daps&field-keywords=x&gclid=abc',
@@ -194,4 +200,35 @@ test('category rulesets are independent (toggling one keeps the others working)'
   assert.equal(simulate(only('trackers', 'campaign', 'sites'), url), 'https://www.amazon.com/dp/B000000001?tag=me-20');
   assert.equal(simulate(only('trackers', 'sites', 'affiliate'), url), 'https://www.amazon.com/dp/B000000001?utm_source=x');
   assert.equal(simulate(only('campaign'), url), 'https://www.amazon.com/dp/B000000001?tag=me-20&fbclid=1&pd_rd_w=z');
+});
+
+test('Strict network rules are off by default and match the page layer when on', () => {
+  const strictOn = Object.assign({}, C.DEFAULT_OPTIONS, {
+    unwrap: false,
+    categories: Object.assign({}, C.DEFAULT_OPTIONS.categories, { strict: true }),
+  });
+  for (const p of NOT_ADDED) {
+    const url = `https://shop.example.com/p/1?id=42&${p}=abc123`;
+    assert.equal(simulate(allStandard, url), url, `default Chrome/Firefox: ${p}`);
+    assert.equal(simulate(allSafari, url), url, `default Safari: ${p}`);
+  }
+  for (const g of globalThis.ClinkRules.STRICT) {
+    for (const p of g.params) {
+      const url = `https://shop.example.com/p/1?id=42&${p}=abc123`;
+      assert.equal(simulate(allStandard, url), url, `default: ${p}`);
+      assert.equal(simulate(strictStandard, url), 'https://shop.example.com/p/1?id=42', `Strict Chrome/Firefox: ${p}`);
+      assert.equal(simulate(strictSafari, url), 'https://shop.example.com/p/1?id=42', `Strict Safari: ${p}`);
+    }
+  }
+  for (const [url, expected] of STRICT_KEEP) {
+    assert.equal(C.clean(url, strictOn).url, expected, url);
+    assert.equal(simulate(strictStandard, url), expected, `Chrome/Firefox: ${url}`);
+    assert.equal(simulate(strictSafari, url), expected, `Safari: ${url}`);
+  }
+  for (const url of AGREE) {
+    assert.equal(simulate(strictStandard, url), C.clean(url, strictOn).url, `Strict: ${url}`);
+  }
+  // Strict on its own removes only its own trackers
+  const only = (...ids) => ids.flatMap((id) => standard[id]).concat(standard.safety);
+  assert.equal(simulate(only('strict'), 'https://a.example.com/?utm_source=x&gps_adid=1&cmpid=2'), 'https://a.example.com/?utm_source=x');
 });

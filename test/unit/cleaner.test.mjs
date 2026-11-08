@@ -3,7 +3,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import '../../src/shared/rules.js';
 import '../../src/shared/cleaner.js';
-import { GLOBAL as LONG_TAIL, SITE_ONLY, NOT_ADDED } from './long-tail-params.mjs';
+import { GLOBAL as LONG_TAIL, SITE_ONLY, NOT_ADDED, STRICT_KEEP, ELOQUA_REDIRECT } from './long-tail-params.mjs';
 
 const C = globalThis.ClinkCleaner;
 const b64url = (s) => Buffer.from(s).toString('base64url');
@@ -106,6 +106,7 @@ const MUST_CLEAN = [
 // URLs Clink must leave EXACTLY as they are.
 const MUST_NOT_CHANGE = [
   'https://example.com/path',
+  ELOQUA_REDIRECT,
   'https://example.com/?a=1&b=2',
   'HTTPS://Example.COM/a?b=1',
   'https://github.com/o/r/blob/main/x.js?ref=v2',
@@ -177,8 +178,49 @@ test('site-only trackers are removed on their site and kept everywhere else', ()
   }
   for (const p of NOT_ADDED) {
     const url = `https://example.com/p?${p}=1`;
-    assert.equal(C.clean(url).url, url, `${p} was deliberately not added`);
+    assert.equal(C.clean(url).url, url, `${p} is kept by default`);
   }
+});
+
+const STRICT_ON = Object.freeze(Object.assign({}, C.DEFAULT_OPTIONS, {
+  categories: Object.assign({}, C.DEFAULT_OPTIONS.categories, { strict: true }),
+}));
+
+test('Strict is off by default and removes its trackers once turned on', () => {
+  assert.equal(C.DEFAULT_OPTIONS.categories.strict, false);
+  assert.equal(C.optionsFromSettings({}).categories.strict, false);
+  assert.equal(C.optionsFromSettings({ categories: { strict: true } }).categories.strict, true);
+  for (const g of globalThis.ClinkRules.STRICT) {
+    for (const p of g.params) {
+      const url = `https://shop.example.com/p/1?id=42&${p}=abc123`;
+      assert.equal(C.clean(url).url, url, `${p} is kept by default`);
+      const r = C.clean(url, STRICT_ON);
+      assert.equal(r.url, 'https://shop.example.com/p/1?id=42', p);
+      assert.deepEqual(r.removed, [p], p);
+      assert.equal(C.trackerCategory(p, url), 'strict', p);
+    }
+  }
+});
+
+test('Strict leaves the sites that need its trackers alone', () => {
+  for (const [url, expected] of STRICT_KEEP) {
+    assert.equal(C.clean(url, STRICT_ON).url, expected, url);
+  }
+  assert.equal(C.trackerCategory('adjust_tracker', 'https://app.adjust.com/x'), null);
+  assert.equal(C.trackerCategory('analytics_trace_id', 'https://shop.example.com/authentication/login'), null);
+  // Strict never removes a parameter another category keeps (Amazon's tag= with affiliate codes kept)
+  const keepAffiliate = { categories: Object.assign({}, STRICT_ON.categories, { affiliate: false }) };
+  assert.equal(
+    C.clean('https://www.amazon.com/dp/B000000001?tag=me-20&gps_adid=1', Object.assign({}, STRICT_ON, keepAffiliate)).url,
+    'https://www.amazon.com/dp/B000000001?tag=me-20'
+  );
+});
+
+test('Eloqua click redirects keep their IDs; other pages still lose them', () => {
+  const r = C.clean(ELOQUA_REDIRECT, STRICT_ON);
+  assert.equal(r.url, ELOQUA_REDIRECT);
+  assert.equal(r.skipped, 'redirect');
+  assert.equal(C.clean('https://example.com/e/error?elqTrackId=abc&id=1').url, 'https://example.com/e/error?id=1');
 });
 
 test('cleans tracking junk', () => {
@@ -241,6 +283,7 @@ test('trackerCategory helper', () => {
   assert.equal(C.trackerCategory('si', 'https://youtu.be/x'), 'sites');
   assert.equal(C.trackerCategory('si', 'https://a.com/'), null);
   assert.equal(C.trackerCategory('tag', 'https://www.amazon.com/dp/B000000001'), 'affiliate');
+  assert.equal(C.trackerCategory('gps_adid', 'https://a.com/'), 'strict');
 });
 
 test('quiet pages', () => {

@@ -386,10 +386,12 @@ test('Firefox: popup and settings pages render without errors', { skip: SKIP }, 
   })()`, popup), 'https://www.amazon.com/dp/B000000001?th=1');
   await snapshotExtensionPage(popup, 'firefox-popup.png', 388);
 
-  // Settings page: all four categories, and the site Link Guard learned is listed.
+  // Settings page: all five categories (Strict off), and the site Link Guard learned is listed.
   await evalIn(`setTimeout(() => location.reload(), 0), true`, probe);
   await sleep(300);
-  await until(() => evalIn(`document.readyState === 'complete' && document.querySelectorAll('[data-category]').length === 4`, probe), 'categories');
+  await until(() => evalIn(`document.readyState === 'complete' && document.querySelectorAll('[data-category]').length === 5`, probe), 'categories');
+  assert.equal(await evalIn(`document.querySelector('[data-category="strict"]').checked`, probe), false);
+  assert.match(await evalIn(`document.querySelector('[data-warning="strict"]').textContent`, probe), /can break links.*Link Guard/);
   await until(() => evalIn(`document.body.textContent.includes('guard.example.com')`, probe), 'Link Guard list');
   await snapshotExtensionPage(probe, 'firefox-options.png', 860);
 
