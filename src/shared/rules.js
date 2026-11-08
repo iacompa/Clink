@@ -61,12 +61,20 @@
     'twclid', '__twitter_impression',
     // TikTok, LinkedIn, Pinterest, Snapchat, Reddit, Quora
     'ttclid', 'li_fat_id', 'epik', 'sccid', 'ScCid', 'rdt_cid', 'qclid',
-    // Yandex
-    'yclid', 'ysclid', '_openstat',
-    // Adobe
-    's_kwcid', 'ef_id',
+    // Yandex (Direct, Metrika)
+    'yclid', 'ysclid', '_openstat', 'clckid', 'ym_tracking_id',
+    // Adobe (Analytics, and Analytics-for-Target redirects)
+    's_kwcid', 'ef_id', 'adobe_mc_ref', 'adobe_mc_sdid',
     // Outbrain / Taboola / Zalo
     'dicbo', 'obOrigUrl', 'tblci', 'gidzl',
+    // Ad clicks: Telegram Ads, Prisjakt, Adsterra
+    'tgclid', 'pjclid', 'adsterra_clid', 'adsterra_placement_id',
+    // LINE and LY Corporation (Yahoo! JAPAN) ads
+    'ldtag_cl', 'line_uid', '_ly_c', '_ly_r', 'yj_r',
+    // VK MyTracker click IDs
+    'mt_click_id', 'mt_link_id',
+    // Cxense (Piano) recommendation clicks
+    'cx_click', 'cx_recsOrder', 'cx_recsWidget',
     // Branch deep links
     '_branch_match_id', '_branch_referrer',
     // Email & marketing-automation subscriber IDs (these identify *you*)
@@ -87,7 +95,14 @@
     'spJobID', 'spMailingID', 'spReportId', 'spUserID',       // Salesforce / Silverpop
     'et_cid', 'et_rid',                                       // ExactTarget
     'vgo_ee',                                                 // ActiveCampaign
+    'sfmc_id',                                                // Salesforce Marketing Cloud
+    'dm_i',                                                   // Dotdigital
+    'ems_dl', 'emcs_t',                                       // Emarsys
+    'mindbox-click-id', 'mindbox-message-key',                // Mindbox
+    'tw_profile_id',                                          // Triple Whale (Klaviyo)
+    'sms_click', 'sms_uph',                                   // SMS marketing click / phone IDs
     'nr_email_referer', 'wickedid', 'rb_clickid', '_bhlid',
+    'redirect_mongo_id', 'redirect_log_mongo_id',             // Redir link shortener
     // Shopify product-recommendation tracking
     'pr_prod_strat', 'pr_rec_id', 'pr_rec_pid', 'pr_ref_pid', 'pr_seq',
   ];
@@ -119,16 +134,35 @@
     'at_ptr_name', 'at_link_id', 'at_link_origin', 'at_link_type', 'at_bbc_team',
     'at_campaign_type', 'at_format', 'at_objective', 'at_platform', 'at_creation',
     'at_variant', 'at_send_date', 'at_recipient_id', 'at_recipient_list', 'at_emailtype',
+    // AT Internet (Piano) campaign tag
+    'xtor',
     // Misc campaign tagging schemes
     'itm_source', 'itm_medium', 'itm_campaign', 'itm_content', 'itm_term',
     'stm_source', 'stm_medium', 'stm_campaign', 'stm_content', 'stm_term',
-    's_cid', 'cm_mmc', 'cm_ven', 'cm_cat', 'cm_pla', 'cm_ite', 'cm_lm',
+    'int_source', 'int_medium', 'int_campaign', 'int_content', 'int_term',
+    's_cid', 'cm_mmc', 'cm_ven', 'cm_cat', 'cm_pla', 'cm_ite', 'cm_lm', 'cm_me', 'cm_cr',
     'WT.mc_id', 'WT.mc_ev', 'WT.srch', 'wt_mc', 'wt_zmc',
+    // DPG Media (Dutch and Belgian news sites)
+    'dpg_source', 'dpg_medium', 'dpg_campaign', 'dpg_content',
+    // Segmentify
+    '_sgm_campaign', '_sgm_source', '_sgm_action', '_sgm_term', '_sgm_pinned',
+    // Triple Whale (Klaviyo)
+    'tw_source', 'tw_medium',
+    // VK MyTracker
+    'mt_network', 'mt_campaign', 'mt_adset', 'mt_creative', 'mt_medium',
+    'mt_sub1', 'mt_sub2', 'mt_sub3', 'mt_sub4', 'mt_sub5',
+    // Salesforce Marketing Cloud, SMS marketing, OpenWeb (Spot.IM) comment links
+    'sfmc_activityid', 'sms_source', 'spot_im_redirect_source',
   ];
 
   // Affiliate-network click IDs (only network-specific names; never generic "ref"/"aff").
   const AFFILIATE = [
-    'cjevent', 'cjdata', 'irclickid', 'irgwc', 'ranMID', 'ranEAID', 'ranSiteID',
+    'cjevent', 'cjdata',                                      // CJ
+    'irclickid', 'irgwc', 'ir_campaignid', 'ir_adid', 'ir_partnerid', // impact.com
+    'ranMID', 'ranEAID', 'ranSiteID',                         // Rakuten
+    'awc', 'zanpid',                                          // Awin (and Zanox, now Awin)
+    'sscid',                                                  // ShareASale
+    'admitad_uid',                                            // Admitad
   ];
 
   // ---------------------------------------------------------------------------
@@ -262,6 +296,13 @@
       params: ['guce_referrer', 'guce_referrer_sig', 'ncid', 'soc_src', 'soc_trk', 'tsrc'],
       // Deliberately kept: guccounter (consent flow — stripping it can loop).
     },
+    { name: 'TechCrunch', domains: ['techcrunch.com'], params: ['sr_share'] },
+    // Not global: MusicBrainz and others use mbid as a real record ID.
+    { name: 'Condé Nast', domains: ['wired.com', 'wired.co.uk', 'newyorker.com'], params: ['mbid'] },
+    { name: 'Humble Bundle', domains: ['humblebundle.com'], params: ['hmb_source', 'hmb_medium', 'hmb_campaign'] },
+    // Not global: "icid" is a generic name; only these sites are known to use it for tracking.
+    { name: 'Kaspersky', domains: ['kaspersky.com'], params: ['icid'] },
+    { name: 'NotebookLM', domains: ['notebooklm.google.com'], params: ['icid'] },
     {
       name: 'News sites',
       domains: ['nytimes.com'],
@@ -411,7 +452,58 @@
       'x-amz-signature', 'x-amz-credential', 'x-goog-signature', 'x-goog-credential',
       'signature', 'sig', 'hmac', 'x-signature', 'key-pair-id', 'googleaccessid',
     ],
+    // Email click-tracking redirects that need their IDs to find the page
+    // (Oracle Eloqua's /e/er, often on the sender's own domain; AdGuard records
+    // breakage). The page they redirect to is still cleaned.
+    redirectPaths: ['/e/er?'],
   };
+
+  // ---------------------------------------------------------------------------
+  // Strict — real trackers that some sites also need, so removing them can
+  // break a link. Off by default; the user opts in under "What to remove".
+  //
+  // Each group lists where it is known to be needed (from breakage reports in
+  // AdGuard's URL-tracking allowlist), and Strict never touches a URL there:
+  // `keepOn` domains (and their subdomains) and `keepPaths`, matched anywhere in
+  // the path and query. On any of those URLs no Strict group runs at all, which
+  // is how the network layer behaves too (one allow rule covers the ruleset).
+  // ---------------------------------------------------------------------------
+
+  const STRICT = [
+    {
+      name: 'Oracle Eloqua',
+      params: ['elq', 'elqak', 'cmpid'],
+      // Eloqua's own links, and an ad server that reads cmpid. (Eloqua's /e/er
+      // redirects are never touched at all: see SAFETY.redirectPaths.)
+      keepOn: ['eloqua.com', 'cleviationly.com'],
+    },
+    {
+      name: 'Adjust',
+      params: ['adj_t', 'adj_label', 'adj_campaign', 'adj_creative', 'adjust_tracker',
+        'adjust_tracker_limit', 'adjust_campaign', 'adjust_adgroup', 'adjust_creative',
+        'adjust_referrer', 'gps_adid', 'unicorn_click_id'],
+      // Adjust's own app links are configured by these parameters.
+      keepOn: ['adjust.com', 'adj.st', 'go.link'],
+    },
+    {
+      name: 'AppsFlyer',
+      params: ['af_xp', 'af_ad', 'af_adset', 'af_click_lookback', 'af_force_deeplink', 'is_retargeting'],
+      // AppsFlyer's OneLink app links are configured by these parameters.
+      keepOn: ['onelink.me', 'appsflyer.com'],
+    },
+    {
+      name: 'Shopify analytics',
+      params: ['analytics_trace_id', 'analytics_context'],
+      // Shopify's sign-in flow (on every shop's own domain) carries them through.
+      keepOn: ['shopify.com'],
+      keepPaths: ['/authentication/'],
+    },
+    {
+      name: 'Russian ad registry token',
+      params: ['erid'],
+      keepOn: ['lifehacker.ru', 'forbes.ru', 'kommersant.ru'],
+    },
+  ];
 
   const CATEGORIES = {
     trackers: {
@@ -430,6 +522,12 @@
       label: 'Affiliate & referral codes',
       description: 'Commission codes like Amazon tag=. Turn off if you want creators to get credit for your purchases.',
     },
+    strict: {
+      label: 'Strict: trackers that some sites need',
+      description: 'Also removes trackers that a few sites rely on (Eloqua email IDs, Adjust and AppsFlyer app-attribution IDs, your phone’s advertising ID gps_adid…). The sites known to need them are skipped, but other links may break.',
+      warning: 'Off by default because it can break links.',
+      strict: true,
+    },
   };
 
   root.ClinkRules = Object.freeze({
@@ -438,6 +536,7 @@
     TRACKERS,
     CAMPAIGN,
     AFFILIATE,
+    STRICT,
     // page-layer only: any parameter starting with these is a campaign tag
     CAMPAIGN_PREFIXES: ['utm_', 'mtm_', 'matomo_', 'hsa_'],
     TRACKER_PREFIXES: ['bsft_'],

@@ -24,7 +24,9 @@
   }
   let info = (tab && (await send({ type: 'clink:popup', tabId: tab.id }))) || {};
 
-  const version = api.runtime.getManifest().version.split('.').slice(0, 2).join('.').replace(/\.0$/, '');
+  // Public versions always have exactly one decimal point: 1.0, 1.1, 2.0 (never 1 or 1.0.0).
+  const [major, minor = '0'] = api.runtime.getManifest().version.split('.');
+  const version = `${major}.${minor}`;
   $('version').textContent = `Version ${version}`;
 
   // -------------------------------------------------------------------------
@@ -167,8 +169,9 @@
   }
 
   $('masterSwitch').addEventListener('change', async (e) => {
+    const checked = e.target.checked;
     settings = await S.update((s) => {
-      s.enabled = e.target.checked;
+      s.enabled = checked;
     });
     render();
   });
@@ -197,6 +200,7 @@
   // ---- Clean a link
   const SKIP_REASON = {
     signed: 'Left as-is: this is a signed link — changing it would break it.',
+    redirect: 'Left as-is: this email redirect needs its IDs to find the page. Clink cleans the page it opens.',
     preferences: 'Left as-is: looks like an unsubscribe or email-preferences link, which needs its IDs.',
     auth: 'Left as-is: sign-in and payment links are never modified.',
     tool: 'Left as-is: marketing-tool links keep their tags.',

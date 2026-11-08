@@ -396,6 +396,98 @@ test('settings: pause a site, toggle categories, master switch', async () => {
   await page.close();
 });
 
+test('Strict: off by default; the Settings switch turns it on, except where its trackers are needed', async () => {
+  await setSettings({});
+  const enabled = () => sw.evaluate(() => chrome.declarativeNetRequest.getEnabledRulesets());
+  assert.ok(!(await enabled()).includes('strict'));
+  const page = await openTab();
+  await page.goto(`http://strict.example.com:${P}/x?gps_adid=1&cmpid=2&keep=1`);
+  assert.equal(strip(page.url()), 'http://strict.example.com/x?gps_adid=1&cmpid=2&keep=1');
+
+  const opts = await ctx.newPage();
+  await opts.goto(`chrome-extension://${extId}/options/options.html`);
+  const strictSwitch = opts.locator('[data-category="strict"]');
+  assert.equal(await strictSwitch.isChecked(), false);
+  assert.match(await opts.textContent('[data-warning="strict"]'), /can break links.*Link Guard/);
+  await strictSwitch.check();
+  await sw.evaluate(async () => {
+    await new Promise((r) => setTimeout(r, 100));
+    // eslint-disable-next-line no-undef
+    await applyChain;
+  });
+  assert.equal((await getSettings()).categories.strict, true);
+  assert.ok((await enabled()).includes('strict'));
+
+  await page.goto(`http://strict.example.com:${P}/x?gps_adid=1&cmpid=2&keep=1`);
+  assert.equal(strip(page.url()), 'http://strict.example.com/x?keep=1');
+  // Adjust's own app links need their parameters: only the campaign tag goes
+  await page.goto(`http://app.adjust.com:${P}/x?adjust_tracker=abc&utm_source=y`);
+  assert.equal(strip(page.url()), 'http://app.adjust.com/x?adjust_tracker=abc');
+  // and the page layer agrees
+  await page.goto(`http://links.example.com:${P}/links`);
+  const cleaned = await page.evaluate(() => {
+    const a = Object.assign(document.createElement('a'), { href: 'http://dest.example.com/a?gps_adid=1&id=7', id: 'strictLink', textContent: 'x' });
+    document.body.append(a);
+    return new Promise((r) => setTimeout(() => r(a.getAttribute('href')), 300));
+  });
+  assert.equal(strip(cleaned), 'http://dest.example.com/a?id=7');
+
+  await strictSwitch.uncheck();
+  await sw.evaluate(async () => {
+    await new Promise((r) => setTimeout(r, 100));
+    // eslint-disable-next-line no-undef
+    await applyChain;
+  });
+  assert.ok(!(await enabled()).includes('strict'));
+  await page.goto(`http://strict.example.com:${P}/x?gps_adid=1&keep=1`);
+  assert.equal(strip(page.url()), 'http://strict.example.com/x?gps_adid=1&keep=1');
+  await setSettings({});
+  await opts.close();
+  await page.close();
+});
+
+test('Settings: anyone can pause their own sites, several at once, and remove them', async () => {
+  await setSettings({});
+  const opts = await ctx.newPage();
+  await opts.setViewportSize({ width: 900, height: 1200 });
+  await opts.goto(`chrome-extension://${extId}/options/options.html`);
+  assert.equal(await opts.isVisible('#pausedEmpty'), true, 'starts with no paused sites');
+  for (const site of ['example.com', 'https://www.news.example.org/some/page?x=1', 'shop.test.example']) {
+    await opts.fill('#pausedInput', site);
+    await opts.click('#addPaused button');
+  }
+  const hosts = () => opts.$$eval('#pausedList .host', (els) => els.map((e) => e.textContent));
+  await opts.waitForFunction(() => document.querySelectorAll('#pausedList li').length === 3);
+  assert.deepEqual(await hosts(), ['example.com', 'news.example.org', 'shop.test.example']);
+  assert.deepEqual((await getSettings()).pausedSites, ['example.com', 'news.example.org', 'shop.test.example']);
+  await sw.evaluate(async () => {
+    // eslint-disable-next-line no-undef
+    await applyChain;
+  });
+  await opts.screenshot({ path: path.join(SHOTS, 'options-paused-sites.png'), fullPage: true });
+
+  // A paused site (and its subdomains) keeps every parameter; other sites are still cleaned
+  const page = await openTab();
+  await page.goto(`http://shop.example.com:${P}/p?utm_source=x&fbclid=y`);
+  assert.equal(strip(page.url()), 'http://shop.example.com/p?utm_source=x&fbclid=y');
+  await page.goto(`http://other.example.net:${P}/p?utm_source=x&id=1`);
+  assert.equal(strip(page.url()), 'http://other.example.net/p?id=1');
+
+  // Remove one: that site is cleaned again
+  await opts.click('#pausedList li:first-child button');
+  await opts.waitForFunction(() => document.querySelectorAll('#pausedList li').length === 2);
+  await sw.evaluate(async () => {
+    await new Promise((r) => setTimeout(r, 100));
+    // eslint-disable-next-line no-undef
+    await applyChain;
+  });
+  await page.goto(`http://shop.example.com:${P}/p?utm_source=x&id=1`);
+  assert.equal(strip(page.url()), 'http://shop.example.com/p?id=1');
+  await setSettings({});
+  await opts.close();
+  await page.close();
+});
+
 test('popup and settings pages render without errors', async () => {
   await setSettings({});
   const site = await openTab(`http://links.example.com:${P}/links`);

@@ -7,7 +7,7 @@
 
   const DEFAULTS = Object.freeze({
     enabled: true,
-    categories: Object.freeze({ trackers: true, campaign: true, sites: true, affiliate: true }),
+    categories: Object.freeze({ trackers: true, campaign: true, sites: true, affiliate: true, strict: false }),
     unwrapRedirects: true, // skip google.com/url, l.facebook.com … hops
     removePing: true, // strip <a ping> click beacons
     cleanOnCopy: true, // clean URLs you copy from page text
@@ -40,10 +40,17 @@
     return s;
   }
 
-  async function update(mutator) {
-    const s = await load();
-    const next = (await mutator(s)) || s;
-    return save(next);
+  // Changes run one at a time: each reads what the previous one saved, so
+  // quick successive changes (several paused sites, two switches) all stick.
+  let pending = Promise.resolve();
+  function update(mutator) {
+    const run = pending.then(async () => {
+      const s = await load();
+      const next = (await mutator(s)) || s;
+      return save(next);
+    });
+    pending = run.catch(() => {}); // a failed change must not block later ones
+    return run;
   }
 
   /** "www.example.com" → "example.com" — the unit users pause. */

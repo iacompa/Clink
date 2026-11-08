@@ -14,7 +14,10 @@
     campaign: ['utm_source', 'utm_medium', 'utm_campaign', 'pk_campaign'],
     sites: ['si (YouTube/Spotify)', 'pd_rd_* (Amazon)', 'ref_src (X)', 'trackingId (LinkedIn)'],
     affiliate: ['tag (Amazon)', 'cjevent', 'irclickid', 'aff_* (AliExpress)'],
+    strict: ['cmpid', 'elq', 'gps_adid', 'af_adset', 'adjust_tracker'],
   };
+  // Link Guard needs webRequest (not available in Safari)
+  const HAS_LINK_GUARD = !!(api.webRequest && api.webRequest.onBeforeRedirect);
 
   // ---- category rows
   const catBox = $('categories');
@@ -38,6 +41,15 @@
       chips.append(c);
     }
     desc.append(chips);
+    if (cat.warning) {
+      const warn = document.createElement('div');
+      warn.className = 'warn small';
+      warn.dataset.warning = id;
+      warn.textContent = `${cat.warning} ${HAS_LINK_GUARD
+        ? 'With Link Guard on, a link that breaks is reopened as the original and Clink stops cleaning that site.'
+        : 'Safari can’t tell when a page breaks. If one does, pause Clink for that site in the popup, then reopen the original link.'}`;
+      desc.append(warn);
+    }
     text.append(title, desc);
     const sw = document.createElement('input');
     sw.type = 'checkbox';
@@ -123,13 +135,21 @@
   }
 
   // ---- events
-  $('enabled').addEventListener('change', (e) => save((s) => { s.enabled = e.target.checked; }));
+  $('enabled').addEventListener('change', (e) => {
+    const checked = e.target.checked;
+    save((s) => { s.enabled = checked; });
+  });
   catBox.addEventListener('change', (e) => {
     const id = e.target.dataset.category;
-    if (id) save((s) => { s.categories[id] = e.target.checked; });
+    const checked = e.target.checked;
+    if (id) save((s) => { s.categories[id] = checked; });
   });
   for (const sw of document.querySelectorAll('[data-setting]')) {
-    sw.addEventListener('change', (e) => save((s) => { s[sw.dataset.setting] = e.target.checked; }));
+    sw.addEventListener('change', (e) => {
+      const id = sw.dataset.setting;
+      const checked = e.target.checked;
+      save((s) => { s[id] = checked; });
+    });
   }
   $('addPaused').addEventListener('submit', (e) => {
     e.preventDefault();
@@ -174,12 +194,11 @@
     /* ignore */
   }
 
-  // Link Guard needs webRequest (not available in Safari)
-  if (!(api.webRequest && api.webRequest.onBeforeRedirect)) {
-    $('guardUnavailable').classList.remove('hidden');
-  }
+  if (!HAS_LINK_GUARD) $('guardUnavailable').classList.remove('hidden');
 
-  const version = api.runtime.getManifest().version.split('.').slice(0, 2).join('.').replace(/\.0$/, '');
+  // Public versions always have exactly one decimal point: 1.0, 1.1, 2.0 (never 1 or 1.0.0).
+  const [major, minor = '0'] = api.runtime.getManifest().version.split('.');
+  const version = `${major}.${minor}`;
   $('version').textContent = `Clink · Version ${version}`;
   render();
   renderStats();

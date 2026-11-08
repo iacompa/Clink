@@ -9,7 +9,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
-import { generateRulesets, RULESET_IDS } from './dnr.mjs';
+import { generateRulesets, RULESET_IDS, DISABLED_BY_DEFAULT } from './dnr.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const SRC = path.join(ROOT, 'src');
@@ -44,7 +44,7 @@ function manifest(target) {
       match_about_blank: true,
     }],
     declarative_net_request: {
-      rule_resources: RULESET_IDS.map((id) => ({ id, enabled: true, path: `rules/${id}.json` })),
+      rule_resources: RULESET_IDS.map((id) => ({ id, enabled: !DISABLED_BY_DEFAULT.includes(id), path: `rules/${id}.json` })),
     },
   };
 

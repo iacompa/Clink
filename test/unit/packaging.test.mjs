@@ -46,6 +46,14 @@ test('Firefox package supports desktop without opting into Android', async () =>
   assert.ok(!Object.hasOwn(firefox.browser_specific_settings, 'gecko_android'));
 });
 
+test('the app version has exactly one decimal point everywhere (1.1, never 1.1.0 or 1)', async () => {
+  assert.match(pkg.version, /^\d+\.\d$/, `package.json version ${pkg.version}`);
+  const pbx = await fs.readFile(path.join(ROOT, 'safari', 'Clink', 'Clink.xcodeproj', 'project.pbxproj'), 'utf8');
+  const marketing = [...pbx.matchAll(/MARKETING_VERSION = ([^;]+);/g)].map((m) => m[1]);
+  assert.ok(marketing.length > 0);
+  for (const v of marketing) assert.equal(v, pkg.version, 'Xcode MARKETING_VERSION');
+});
+
 test('browser packages preserve identifiers, internal versions, and background behavior', async () => {
   for (const target of TARGETS) {
     const m = await manifest(target);
@@ -115,11 +123,11 @@ async function versionLabel(root, page, version) {
 
 for (const [page, prefix] of [['popup', ''], ['options', 'Clink · ']]) {
   test(`${page} shows public versions without internal patch numbers`, async () => {
-    for (const [internal, visible] of [['1.0.0', '1'], ['1.1.0', '1.1'], ['1.9.3', '1.9'], ['2.0.0', '2']]) {
+    for (const [internal, visible] of [['1.0.0', '1.0'], ['1.1', '1.1'], ['1.1.0', '1.1'], ['1.9.3', '1.9'], ['2.0', '2.0'], ['2', '2.0'], ['10.5', '10.5']]) {
       assert.equal(await versionLabel(path.join(ROOT, 'src'), page, internal), `${prefix}Version ${visible}`, internal);
     }
     for (const target of TARGETS) {
-      assert.equal(await versionLabel(path.join(fixture, 'dist', target), page, pkg.version), `${prefix}Version 1`, target);
+      assert.equal(await versionLabel(path.join(fixture, 'dist', target), page, pkg.version), `${prefix}Version ${pkg.version}`, target);
     }
   });
 }

@@ -25,12 +25,17 @@ Removing parameters is easy. Removing them *without ever landing on a broken pag
 what the design is built around:
 
 1. **Only known trackers are removed.** Clink never strips "everything after the `?`". It
-   removes parameters on a curated list (97 click/email trackers, 139 campaign tags,
-   7 affiliate codes, plus rules for 33 specific sites). Anything that might matter is kept:
+   removes parameters on a curated list (126 click/email trackers, 171 campaign tags,
+   14 affiliate codes, plus rules for 38 specific sites). Anything that might matter is kept:
    search terms, product variants (`th=1`), timestamps (`t=42`), gift-article codes, invite codes.
+   A stricter list of 24 trackers that a few sites also need (Eloqua's `elq`/`cmpid`, app
+   IDs such as `gps_adid`, AppsFlyer and Adjust tags) is **off by default**. Turn on *Strict*
+   in Settings if you want them gone too; it still skips the sites known to need them.
 2. **Some links are never touched:**
    - unsubscribe, email-preference and opt-in links (they need their IDs)
    - signed links: S3, Google Cloud, CloudFront, `sig=`/`signature=`
+   - email click redirects that need their IDs to find the page (Eloqua's `/e/er`); the page
+     they open is still cleaned
    - sign-in and checkout pages: Google, Microsoft, Apple, PayPal, Stripe, Shopify
    - marketing dashboards such as Google Analytics and campaign URL builders
    - `localhost`, `.test`, `.local`, private IPs and local files
@@ -40,7 +45,8 @@ what the design is built around:
    an address you typed or a link you clicked on a page. If the cleaned page fails to load (a 404 or similar error, or a redirect loop because the site insists
    on its tracker), Clink reopens the original link at once. It also remembers that site, so
    it never breaks there again. You can see and undo what it learned in Settings.
-4. **You stay in control.** You can pause Clink per site, toggle each category (for
+4. **You stay in control.** You can pause Clink on any sites you choose (from the popup, or
+   add as many as you like in Settings), toggle each category (for
    example, keep affiliate codes so creators get credit), and the popup has a one-click
    *"Reload with the original link"* button.
 
@@ -88,7 +94,7 @@ The build writes `dist/chrome`, `dist/firefox` and `dist/safari`, plus store-rea
 3. Pin Clink from the puzzle-piece menu.
 
 An unpacked extension stays installed across restarts. To publish, upload
-`dist/clink-chrome-1.0.0.zip` to the Chrome Web Store developer dashboard.
+`dist/clink-chrome-<version>.zip` to the Chrome Web Store developer dashboard.
 Chrome 116 or newer is required.
 
 ### Firefox (desktop 140+, Android 142+)
@@ -104,7 +110,7 @@ Chrome 116 or newer is required.
   ```
 
   This gives you a signed `.xpi` in `web-ext-artifacts/`; drag it into Firefox. To publish
-  publicly, upload `dist/clink-firefox-1.0.0.zip` to addons.mozilla.org.
+  publicly, upload `dist/clink-firefox-<version>.zip` to addons.mozilla.org.
 
 ### Safari (macOS and iOS)
 

@@ -116,10 +116,25 @@
       (kw) => new RegExp('(?:^|[^a-z0-9%])' + kw.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
     ),
     signatureParams: toSet(R.SAFETY.signatureParams),
+    redirectPaths: lower(R.SAFETY.redirectPaths || []),
   };
 
-  const ALL_ON = Object.freeze({ trackers: true, campaign: true, sites: true, affiliate: true });
-  const DEFAULT_OPTIONS = Object.freeze({ enabled: true, categories: ALL_ON, unwrap: true, paused: [] });
+  // Strict: trackers some sites also need. Never on unless the user turns it on,
+  // and never on a URL where one of them is known to be needed.
+  const STRICT = {
+    params: toSet((R.STRICT || []).flatMap((g) => g.params)),
+    keepOn: (R.STRICT || []).flatMap((g) => g.keepOn || []),
+    keepPaths: lower((R.STRICT || []).flatMap((g) => g.keepPaths || [])),
+  };
+  function strictAllowed(u, host) {
+    if (hostIn(host, STRICT.keepOn)) return false;
+    const rest = (u.pathname + u.search).toLowerCase();
+    return !STRICT.keepPaths.some((p) => rest.includes(p));
+  }
+
+  // Every category is on by default except Strict.
+  const DEFAULT_CATEGORIES = Object.freeze({ trackers: true, campaign: true, sites: true, affiliate: true, strict: false });
+  const DEFAULT_OPTIONS = Object.freeze({ enabled: true, categories: DEFAULT_CATEGORIES, unwrap: true, paused: [] });
 
   // ---------------------------------------------------------------------------
   // Helpers
@@ -181,6 +196,8 @@
     for (const k of queryKeys(u.search)) {
       if (SAFETY.signatureParams.has(k.toLowerCase())) return 'signed';
     }
+    const rest = (u.pathname + u.search).toLowerCase();
+    if (SAFETY.redirectPaths.some((p) => rest.includes(p))) return 'redirect';
     return null;
   }
 
@@ -189,7 +206,7 @@
   }
 
   /** Category of a (lower-cased) parameter name on this site, or null. */
-  function classify(lk, sites, conds) {
+  function classify(lk, sites, conds, strictOk) {
     if (GLOBAL.trackers.has(lk) || TRACKER_PREFIXES.some((p) => lk.startsWith(p))) return 'trackers';
     if (GLOBAL.campaign.has(lk) || CAMPAIGN_PREFIXES.some((p) => lk.startsWith(p))) return 'campaign';
     if (GLOBAL.affiliate.has(lk)) return 'affiliate';
@@ -200,6 +217,7 @@
     for (const c of conds) {
       if (c.params.has(lk)) return c.category;
     }
+    if (strictOk && STRICT.params.has(lk)) return 'strict';
     return null;
   }
 
@@ -214,7 +232,7 @@
     const host = normHost(u.hostname);
     const keys = new Set(queryKeys(u.search).map((k) => k.toLowerCase()));
     const conds = CONDITIONAL.filter((c) => c.matchHost(host) && [...c.when].some((w) => keys.has(w)));
-    return classify(String(key).toLowerCase(), sitesFor(host, u.pathname), conds);
+    return classify(String(key).toLowerCase(), sitesFor(host, u.pathname), conds, strictAllowed(u, host));
   }
 
   // ---------------------------------------------------------------------------
@@ -238,11 +256,13 @@
       (c) => c.matchHost(host) && [...c.when].some((w) => present.has(w))
     );
 
+    const strictOk = !!cats.strict && strictAllowed(u, host);
+
     const kept = [];
     let changed = false;
     for (let i = 0; i < segments.length; i++) {
       const lk = lowerKeys[i];
-      const cat = lk ? classify(lk, sites, conds) : null;
+      const cat = lk ? classify(lk, sites, conds, strictOk) : null;
       if (cat && cats[cat]) {
         changed = true;
         if (!removed.includes(keys[i])) removed.push(keys[i]);
@@ -350,7 +370,7 @@
 
   function clean(input, options) {
     const opts = options || DEFAULT_OPTIONS;
-    const cats = opts.categories || ALL_ON;
+    const cats = opts.categories || DEFAULT_CATEGORIES;
     const res = { url: input, changed: false, removed: [], unwrapped: [], skipped: null };
 
     if (opts.enabled === false) return res;
@@ -419,7 +439,7 @@
       .map(normHost);
     return {
       enabled: s.enabled !== false,
-      categories: Object.assign({}, ALL_ON, s.categories || {}),
+      categories: Object.assign({}, DEFAULT_CATEGORIES, s.categories || {}),
       unwrap: s.unwrapRedirects !== false,
       paused,
     };
