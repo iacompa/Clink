@@ -68,6 +68,8 @@ Web Store has no release-notes field.
 >   still skips the sites known to need them.
 > • Email click links sent with Oracle Eloqua are now left whole, so they always open the right
 >   page.
+> • Fixed: changing several settings quickly, such as pausing a few sites in a row, could lose
+>   one of the changes.
 
 ## Categories
 

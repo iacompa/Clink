@@ -40,10 +40,17 @@
     return s;
   }
 
-  async function update(mutator) {
-    const s = await load();
-    const next = (await mutator(s)) || s;
-    return save(next);
+  // Changes run one at a time: each reads what the previous one saved, so
+  // quick successive changes (several paused sites, two switches) all stick.
+  let pending = Promise.resolve();
+  function update(mutator) {
+    const run = pending.then(async () => {
+      const s = await load();
+      const next = (await mutator(s)) || s;
+      return save(next);
+    });
+    pending = run.catch(() => {}); // a failed change must not block later ones
+    return run;
   }
 
   /** "www.example.com" → "example.com" — the unit users pause. */
